@@ -22,25 +22,24 @@ public class DBLink {
         }
     }
     // username in
-    // 1 = user exists
-    // 2 = user does not exist
-    public String getUser(String username) {
-        Statement = conn.createStatement();
-        String sql = String.format("SELECT * FROM users WHERE username = '%s'", username);
-        ResultSet rs = s.executeQuery(sql);
-        return rs.next() ? 0 : 1
-    }
-
-    // 0 = user deleted
-    // 1 = user does not exist
-    public String delUser(String username) {
-        if (getUser(username).equals(0)) {
+    // 0 = user exists
+    // 1 = user does not 
+    // 2 = error
+    public int findUser(String username) {
+        try {
             Statement s = conn.createStatement();
-            String sql = String.format("DELETE FROM users WHERE username = '%s'", username);
-            s.executeUpdate(sql);
-            return 0;
+            ResultSet rs = s.executeQuery(String.format("SELECT * FROM users WHERE username = '%s'", username));
+            return rs.next() ? 0 : 1 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-        return 1;
     }
 
+    public JSONObject getLoginInfo(String username){
+        try {
+            Statement s = conn.createStatement();
+            ResultSet rs = s.executeQuery(String.format("SELECT "))
+        }
+
+    }
 }

@@ -20,7 +20,8 @@ public class APIRestController {
     @GetMapping("/getUser/{username}")
     public JSONObject getUser(@PathVariable("id") String username){
         DBLink db = new DBLink();
-        DBLink.getUser(username);
+        return DBLink.findUser(username);
+
     }
     
 

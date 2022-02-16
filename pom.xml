@@ -12,7 +12,7 @@
 	<artifactId>server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>rest</name>
-	<description>Demo project for Spring Boot</description>
+	<description>REST API for firstlane pw mgr</description>
 	<properties>
 		<java.version>11</java.version>
 	</properties>
