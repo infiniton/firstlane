@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.sql.ResultSet;
 
 import org.json.JSONObject;
-import org.json.JSONArray;
 
 public class DBLink {
     private static final String url = "jdbc:mysql://localhost:3306/firstlane";
