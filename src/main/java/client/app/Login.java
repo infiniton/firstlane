@@ -101,22 +101,8 @@ public class Login extends JFrame implements ActionListener {
 
             try {
                 client.login(username, password);
-                JSONObject res = client.getResponse();
-                String exit = res.get("data").toString();
-                switch (exit) {
-                    case "0":
-                        message.setText("Login successful.");
-                        break;
-                    case "1":
-                        message.setText("Invalid user.");
-                        break;
-                    case "2":
-                        message.setText("Invalid password.");
-                        break;
-                    case "3":
-                        message.setText("Login failed. Please try again.");
-                        break;
-                }
+                // TODO - complete client registration
+                // TODO - check response                
             } catch (Exception ex) {
                 ex.printStackTrace();
             }
