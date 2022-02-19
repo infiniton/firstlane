@@ -1,8 +1,10 @@
+package client.app;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
-import org.json.simple.JSONObject;
+import org.json.JSONObject;
 
 public class Login extends JFrame implements ActionListener {
     JPanel panel;
@@ -90,7 +92,6 @@ public class Login extends JFrame implements ActionListener {
             String password = String.valueOf(passwordText.getPassword());
 
             JSONObject json = new JSONObject();
-            json = PasswordUtils.secure(username, password);
 
             // secure the password with password utils
             json.put("type", "login");

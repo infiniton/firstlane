@@ -1,3 +1,5 @@
+package client.app;
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -23,7 +25,7 @@ public class LoginGUI {
         c.setBackground(Color.white);        
 
         //add logo to frame
-        ImageIcon logo = new ImageIcon("./client/app/content/logo.png");
+        ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
         ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 20,logo.getIconHeight() / 20, Image.SCALE_SMOOTH));
         JLabel scaledLogo = new JLabel(scaledImage);
         frame.add(scaledLogo);
@@ -32,7 +34,7 @@ public class LoginGUI {
         scaledLogo.setPreferredSize(new Dimension(475, 225));
 
 
-        ImageIcon loginPic = new ImageIcon("./client/app/content/lock-closed-r.png");
+        ImageIcon loginPic = new ImageIcon("./src/main/java/client/app/content/lock-closed-r.png");
         ImageIcon scaledloginButton = new ImageIcon(loginPic.getImage().getScaledInstance(loginPic.getIconWidth() / 4,loginPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
         JButton loginButton = new JButton(scaledloginButton);
 

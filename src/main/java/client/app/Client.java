@@ -6,8 +6,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.security.*;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.*;
+import org.json.JSONObject;
 
 public class Client {
     private Socket client;
@@ -31,7 +30,6 @@ public class Client {
         this.out.write(json.toJSONString() + "\n");
         this.out.flush();
 
-        JSONParser parser = new JSONParser();
         JSONObject jsonIn = null;
         
         // get user from server

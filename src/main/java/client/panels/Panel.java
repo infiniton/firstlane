@@ -1,3 +1,6 @@
+package client.panels;
+
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
