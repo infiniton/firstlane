@@ -23,4 +23,10 @@ public class APIRestController {
         return db.getLoginInfo(username).toString();
     }
 
+    @GetMapping("/exists")
+    public String exists(@RequestParam String username) {
+        DBLink db = new DBLink();
+        return db.findUser(username) == 0 ? "true" : "false";
+    }
+
 }

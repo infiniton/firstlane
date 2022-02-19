@@ -5,11 +5,9 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.UUID;
 
 import org.json.JSONObject;
 import org.json.JSONArray;
-
 
 public class DBLink {
     private static final String url = "jdbc:mysql://localhost:3306/firstlane";
@@ -25,9 +23,10 @@ public class DBLink {
             e.printStackTrace();
         }
     }
+
     // username in
     // 0 = user exists
-    // 1 = user does not 
+    // 1 = user does not
     // 2 = error
     public int findUser(String username) {
         try {
@@ -43,13 +42,18 @@ public class DBLink {
 
     public JSONObject getLoginInfo(String username) {
         try {
+            System.out.println(username);
             PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
             JSONObject user = new JSONObject();
-            user.put("username", rs.getString("username"));
-            user.put("password", rs.getString("password"));
-            user.put("data", rs.getString("data"));
+            
+            while (rs.next()) {
+                user.put("data", rs.getString("data"));
+                user.put("password", rs.getString("password"));
+                user.put("username", rs.getString("username"));
+
+            }
             return user;
         } catch (Exception e) {
             e.printStackTrace();
@@ -57,4 +61,3 @@ public class DBLink {
         return null;
     }
 }
-
