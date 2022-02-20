@@ -12,16 +12,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class Register {
 
     private PasswordEncoder passwordEncoder;
+    public Object registerButton;
+    public String usernameText;
+    public String passwordText;
 
     // TODO - build registration ui
+
 
     public void actionPerformed(ActionEvent e) {
         // TODO - replace login button with register button
         if (e.getSource() == registerButton) {
 
-            String username = usernameText.getText();
-            String password = passwordEncoder.encode(passwordText.getPassword());
-
+            //String username = usernameText.getText();
+            //String password = passwordEncoder.encode(/(passwordText.getPassword());
+            String username = "oopsie";
+            String password = "abcd";
             JSONObject json = new JSONObject();
 
             // secure the password with password utils
@@ -30,9 +35,11 @@ public class Register {
             json.put("password", password);
 
             try {
-                client.register(username, password);
+                //client.register(username, password);
                 // TODO - complete client registration
                 // TODO - check response
+
+                System.out.println("Registration successful");
                 
             } catch (Exception ex) {
                 ex.printStackTrace();

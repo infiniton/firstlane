@@ -28,8 +28,7 @@ public class DBLink {
     // 1 = user does not
     // 2 = error
     public int findUser(String username) {
-        try {
-            PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
             return rs.next() ? 0 : 1;
@@ -39,21 +38,28 @@ public class DBLink {
         return 2;
     }
 
-    public JSONObject getLoginInfo(String username) {
-        try {
-            System.out.println(username);
-            PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?");
+    // add user to database
+    // 0 = success
+    // 2 = error
+    public int addUser(String username, String password) {
+        try (PreparedStatement s = conn.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?)")) {
+            s.setString(1, username);
+            s.setString(2, password);
+            s.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 2;
+        }
+        return 0;
+    }
+
+    public String getPassword(String username) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
-            JSONObject user = new JSONObject();
-            
             while (rs.next()) {
-                user.put("data", rs.getString("data"));
-                user.put("password", rs.getString("password"));
-                user.put("username", rs.getString("username"));
-
+                return rs.getString("password");
             }
-            return user;
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,72 +1,115 @@
+package client.app;
+
 import java.net.*;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.io.*;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.security.*;
 
 import org.json.JSONObject;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 
 public class Client {
-    private Socket client;
-    private BufferedReader in;
-    private OutputStreamWriter out;
-    private LinkedBlockingQueue<JSONObject> queue;
+    private HttpURLConnection con;
 
     private String user;
 
+    // instantiate password encoder
+    private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     public Client() throws IOException {
-        this.client = new Socket("localhost", 5050);
-        this.out = new OutputStreamWriter(client.getOutputStream());
 
     }
 
-    public void login(String user, String password) throws IOException {
-        this.user = user;
-        JSONObject json = new JSONObject();
-        json.put("type", "login");
-        json.put("user", user);
-        this.out.write(json.toJSONString() + "\n");
-        this.out.flush();
+    private String sendRequest(String url, String method, String body) throws IOException {
+        URL loginUrl = new URL(url);
 
-        JSONObject jsonIn = null;
-        
-        // get user from server
-        String serverUser = (String)jsonIn.get("user");
-
-        //make jsonobject with salt and hash
-        JSONObject jsonPWdata = new JSONObject();
-        jsonPWdata.put("type", "login");
-        jsonPWdata.put("user", user);
-        jsonPWdata.put("salt", (String)jsonIn.get("salt"));
-        jsonPWdata.put("hash", (String)jsonIn.get("hash"));
-
-
-        // passwordutils check password
-        PasswordUtils.check(user, password, jsonPWdata);
-
-        // send passwordutils output to server
-        JSONObject jsonOut = new JSONObject();
-        jsonOut.put("type", "res");
-        jsonOut.put("check", PasswordUtils.check(user, password, jsonPWdata));
-
-
-        this.out.write(jsonOut.toJSONString() + "\n");
-        this.out.flush();
-
-
-    }    
-
-    public JSONObject getResponse() throws IOException {
-        String line = this.in.readLine();
-        JSONParser parser = new JSONParser();
-        JSONObject json = null;
-        try {
-            json = (JSONObject) parser.parse(line);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        // configure connection
+        con = (HttpURLConnection) loginUrl.openConnection();
+        con.setRequestMethod(method);
+        if ("POST".equals(method)) {
+            con.setRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);            
         }
-        return json;
+
+        if ("POST".equals(method)) {
+            // send request body
+            DataOutputStream out = new DataOutputStream(con.getOutputStream());
+            out.writeBytes(body);
+            out.flush();
+            out.close();
+        }
+
+        // get response
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+
+        return response.toString();
     }
+
+    public int login(String user, String password) throws IOException {
+        System.out.println('\n' + "Logging in...");
+        this.user = user;
+        String loginUrl = "http://localhost:8080/api/user?username=" + user;
+
+        JSONObject req = new JSONObject();
+        req.put("username", user);
+        req.put("password", password);
+
+        String respBody = sendRequest(loginUrl, "GET", req.toString());
+        JSONObject resp = new JSONObject(respBody);
+
+        //compare password in db to password passed in
+        if (passwordEncoder.matches(password, resp.getString("password"))) {
+            System.out.println("Login successful");
+            return 0;
+        } else {
+            System.out.println("Login failed");
+            return 1;
+        }
+
+    }
+
+    public void register(String user, String password) throws IOException {
+        URL registerUrl = new URL("http://localhost:8080/api/user");
+
+        // configure connection
+        con = (HttpURLConnection) registerUrl.openConnection();
+        con.setRequestMethod("POST");
+        con.setRequestProperty("Content-Type", "application/json");
+        con.setDoOutput(true);
+        con.setDoInput(true);
+        con.setUseCaches(false);
+        con.setAllowUserInteraction(false);
+        con.setConnectTimeout(5000);
+        con.setReadTimeout(5000);
+
+        // make jsonobject with user ans password
+        JSONObject json = new JSONObject();
+        json.put("username", user);
+        json.put("password", passwordEncoder.encode(password));
+
+        // send user and password to server
+        DataOutputStream out = new DataOutputStream(con.getOutputStream());
+        out.writeBytes(json.toString());
+        out.flush();
+        out.close();
+
+
+        // get response
+        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        String inputLine;
+        StringBuffer response = new StringBuffer();
+
+        while ((inputLine = in.readLine()) != null) {
+            response.append(inputLine);
+        }
+
+        
+    }
+
 }

@@ -33,21 +33,23 @@ public class LoginGUI {
         //center the middle of logo with middle of frame
         scaledLogo.setPreferredSize(new Dimension(475, 225));
 
-
-        ImageIcon loginPic = new ImageIcon("./src/main/java/client/app/content/lock-closed-r.png");
-        ImageIcon scaledloginButton = new ImageIcon(loginPic.getImage().getScaledInstance(loginPic.getIconWidth() / 4,loginPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
-        JButton loginButton = new JButton(scaledloginButton);
-
+        JButton loginButton = new JButton("Login");
 
         loginButton.setOpaque(false);
         loginButton.setContentAreaFilled(false);
-        loginButton.setBorderPainted(false);
+        loginButton.setBorderPainted(true);
         loginButton.setFocusPainted(false);
+        loginButton.setFont(new Font("Arial", Font.BOLD, 32));
+        // set text color
+        loginButton.setForeground(new Color(27, 38, 79));
+        // button border thickness and color 8E73FF
+        loginButton.setBorder(BorderFactory.createMatteBorder(5, 5, 5, 5, new Color(142, 115, 255)));
 
         c.add(loginButton);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, loginButton, 0, SpringLayout.HORIZONTAL_CENTER, c);
-        layout.putConstraint(SpringLayout.NORTH, loginButton, 400, SpringLayout.NORTH, c);
-        loginButton.setPreferredSize(new Dimension(360, 50));
+        layout.putConstraint(SpringLayout.NORTH, loginButton, 350, SpringLayout.NORTH, c);
+        //button should be the width of the text
+        loginButton.setPreferredSize(new Dimension(loginButton.getText().length()*25, 50));
         loginButton.addActionListener(new LoginPressed());
 
         JButton registerButton = new JButton("Register");
@@ -55,11 +57,10 @@ public class LoginGUI {
         registerButton.setContentAreaFilled(false);
         registerButton.setBorderPainted(false);
         registerButton.setForeground(Color.black);
-        registerButton.setFont(new Font("Arial", Font.BOLD, 20));
 
         c.add(registerButton);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, registerButton, 0, SpringLayout.HORIZONTAL_CENTER, c);
-        layout.putConstraint(SpringLayout.NORTH, registerButton, 300, SpringLayout.NORTH, c);
+        layout.putConstraint(SpringLayout.NORTH, registerButton, 400, SpringLayout.NORTH, c);
         registerButton.setPreferredSize(new Dimension(360, 50));
         //registerButton.addActionListener(new RegisterPressed());
 

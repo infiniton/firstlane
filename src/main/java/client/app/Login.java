@@ -29,39 +29,42 @@ public class Login extends JFrame implements ActionListener {
         usernameLabel = new JLabel("Username: ");
         panel.add(usernameLabel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, usernameLabel, 75, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, usernameLabel, 300, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, usernameLabel, 110, SpringLayout.NORTH, panel);
         usernameLabel.setPreferredSize(new Dimension(360, 50));
 
         usernameText = new JTextField();
         panel.add(usernameText);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, usernameText, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, usernameText, 350, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, usernameText, 150, SpringLayout.NORTH, panel);
         usernameText.setPreferredSize(new Dimension(150, 45));
 
         passwordLabel = new JLabel("Password: ");
         panel.add(passwordLabel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, passwordLabel, 75, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, passwordLabel, 400, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, passwordLabel, 210, SpringLayout.NORTH, panel);
         passwordLabel.setPreferredSize(new Dimension(360, 50));
 
         passwordText = new JPasswordField();
         panel.add(passwordText);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, passwordText, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, passwordText, 450, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, passwordText, 250, SpringLayout.NORTH, panel);
         passwordText.setPreferredSize(new Dimension(150, 45));
 
-        loginButton = new JButton("Login");
+        ImageIcon loginPic = new ImageIcon("./src/main/java/client/app/content/lock-closed-r.png");
+        ImageIcon scaledloginButton = new ImageIcon(loginPic.getImage().getScaledInstance(loginPic.getIconWidth() / 4,loginPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
+        JButton loginButton = new JButton(scaledloginButton);        
         panel.add(loginButton);
 
+
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, loginButton, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, loginButton, 500, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, loginButton, 400, SpringLayout.NORTH, panel);
         loginButton.setPreferredSize(new Dimension(360, 50));
 
         loginButton.setOpaque(false);
         loginButton.setContentAreaFilled(false);
         loginButton.setBorderPainted(false);
         loginButton.setForeground(Color.white);
-        loginButton.setFont(new Font("Arial", Font.BOLD, 20));
+
 
         message = new JLabel();
 
@@ -86,18 +89,11 @@ public class Login extends JFrame implements ActionListener {
     }
 
     public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == loginButton) {
+
+            System.out.println("Login button pressed");
 
             String username = usernameText.getText();
             String password = String.valueOf(passwordText.getPassword());
-
-            JSONObject json = new JSONObject();
-
-            // secure the password with password utils
-            json.put("type", "login");
-            json.put("user", (String) json.get("user"));
-            json.put("hash", (String) json.get("hash"));
-            json.put("salt", (String) json.get("salt"));
 
             try {
                 client.login(username, password);
@@ -107,6 +103,6 @@ public class Login extends JFrame implements ActionListener {
                 ex.printStackTrace();
             }
 
-        }
+        
     }
 }
