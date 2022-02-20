@@ -6,7 +6,7 @@ import javax.swing.*;
 
 import org.json.JSONObject;
 
-public class Login extends JFrame implements ActionListener {
+public class Login extends JFrame implements ActionListener, KeyListener {
     JPanel panel;
 
     JLabel usernameLabel, passwordLabel, badLogin, goodLogin;
@@ -26,28 +26,37 @@ public class Login extends JFrame implements ActionListener {
         panel = new JPanel(layout);
         panel.setBackground(Color.WHITE);
 
+        //add logo to panel
+        ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
+        ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 50,logo.getIconHeight() / 50, Image.SCALE_SMOOTH));
+        JLabel scaledLogo = new JLabel(scaledImage);
+        panel.add(scaledLogo);
+
+        //center the middle of logo with middle of frame
+        scaledLogo.setPreferredSize(new Dimension(475, 125));
+
         usernameLabel = new JLabel("Username: ");
         panel.add(usernameLabel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, usernameLabel, 75, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, usernameLabel, 110, SpringLayout.NORTH, panel);
-        usernameLabel.setPreferredSize(new Dimension(360, 50));
+        layout.putConstraint(SpringLayout.NORTH, usernameLabel, 130, SpringLayout.NORTH, panel);
+        usernameLabel.setPreferredSize(new Dimension(300, 50));
 
         usernameText = new JTextField();
         panel.add(usernameText);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, usernameText, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, usernameText, 150, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, usernameText, 170, SpringLayout.NORTH, panel);
         usernameText.setPreferredSize(new Dimension(150, 45));
 
         passwordLabel = new JLabel("Password: ");
         panel.add(passwordLabel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, passwordLabel, 75, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, passwordLabel, 210, SpringLayout.NORTH, panel);
-        passwordLabel.setPreferredSize(new Dimension(360, 50));
+        layout.putConstraint(SpringLayout.NORTH, passwordLabel, 230, SpringLayout.NORTH, panel);
+        passwordLabel.setPreferredSize(new Dimension(300, 50));
 
         passwordText = new JPasswordField();
         panel.add(passwordText);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, passwordText, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, passwordText, 250, SpringLayout.NORTH, panel);
+        layout.putConstraint(SpringLayout.NORTH, passwordText, 270, SpringLayout.NORTH, panel);
         passwordText.setPreferredSize(new Dimension(150, 45));
 
         ImageIcon loginPic = new ImageIcon("./src/main/java/client/app/content/lock-closed-r.png");
@@ -58,7 +67,7 @@ public class Login extends JFrame implements ActionListener {
 
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, loginButton, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         layout.putConstraint(SpringLayout.NORTH, loginButton, 400, SpringLayout.NORTH, panel);
-        loginButton.setPreferredSize(new Dimension(360, 50));
+        loginButton.setPreferredSize(new Dimension(50, 50));
 
         loginButton.setOpaque(false);
         loginButton.setContentAreaFilled(false);
@@ -101,7 +110,8 @@ public class Login extends JFrame implements ActionListener {
         // set the frame to be un-resizable
         this.setResizable(false);
     }
-
+    
+    @Override
     public void actionPerformed(ActionEvent e) {
 
         System.out.println("Login button pressed");
