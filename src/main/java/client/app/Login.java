@@ -6,7 +6,7 @@ import javax.swing.*;
 
 import org.json.JSONObject;
 
-public class Login extends JFrame implements ActionListener, KeyListener {
+public class Login extends JFrame implements ActionListener {
     JPanel panel;
 
     JLabel usernameLabel, passwordLabel, badLogin, goodLogin;
