@@ -9,7 +9,7 @@ import org.json.JSONObject;
 public class Login extends JFrame implements ActionListener {
     JPanel panel;
 
-    JLabel usernameLabel, passwordLabel, message;
+    JLabel usernameLabel, passwordLabel, badLogin, goodLogin;
 
     JTextField usernameText;
     JPasswordField passwordText;
@@ -51,10 +51,10 @@ public class Login extends JFrame implements ActionListener {
         passwordText.setPreferredSize(new Dimension(150, 45));
 
         ImageIcon loginPic = new ImageIcon("./src/main/java/client/app/content/lock-closed-r.png");
-        ImageIcon scaledloginButton = new ImageIcon(loginPic.getImage().getScaledInstance(loginPic.getIconWidth() / 4,loginPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
-        JButton loginButton = new JButton(scaledloginButton);        
+        ImageIcon scaledloginButton = new ImageIcon(loginPic.getImage().getScaledInstance(loginPic.getIconWidth() / 4,
+                loginPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
+        JButton loginButton = new JButton(scaledloginButton);
         panel.add(loginButton);
-
 
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, loginButton, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         layout.putConstraint(SpringLayout.NORTH, loginButton, 400, SpringLayout.NORTH, panel);
@@ -65,20 +65,34 @@ public class Login extends JFrame implements ActionListener {
         loginButton.setBorderPainted(false);
         loginButton.setForeground(Color.white);
 
+        ImageIcon xPic = new ImageIcon("./src/main/java/client/app/content/redX.png");
+        ImageIcon scaledXPic = new ImageIcon(xPic.getImage().getScaledInstance(xPic.getIconWidth() / 15,
+                xPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
+        badLogin = new JLabel(scaledXPic);
+        badLogin.setVisible(false);
 
-        message = new JLabel();
+        ImageIcon chekcPic = new ImageIcon("./src/main/java/client/app/content/check.png");
+        ImageIcon scaledCheckPic = new ImageIcon(chekcPic.getImage().getScaledInstance(chekcPic.getIconWidth() / 15,
+        chekcPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
+        goodLogin = new JLabel(scaledCheckPic);
+        goodLogin.setVisible(false);
 
-        panel.add(message);
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, message, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, message, 550, SpringLayout.NORTH, panel);
-        message.setPreferredSize(new Dimension(360, 50));
+
+
+        panel.add(badLogin);
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, badLogin, 0, SpringLayout.HORIZONTAL_CENTER, panel);
+        layout.putConstraint(SpringLayout.NORTH, badLogin, 350, SpringLayout.NORTH, panel);
+
+        panel.add(goodLogin);
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, goodLogin, 0, SpringLayout.HORIZONTAL_CENTER, panel);
+        layout.putConstraint(SpringLayout.NORTH, goodLogin, 350, SpringLayout.NORTH, panel);
+
 
         loginButton.addActionListener(this);
         add(panel, BorderLayout.CENTER);
         setSize(500, 500);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-    
 
         // center the frame
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -90,19 +104,30 @@ public class Login extends JFrame implements ActionListener {
 
     public void actionPerformed(ActionEvent e) {
 
-            System.out.println("Login button pressed");
+        System.out.println("Login button pressed");
 
-            String username = usernameText.getText();
-            String password = String.valueOf(passwordText.getPassword());
+        String username = usernameText.getText();
+        String password = String.valueOf(passwordText.getPassword());
 
-            try {
-                client.login(username, password);
-                // TODO - complete client registration
-                // TODO - check response                
-            } catch (Exception ex) {
-                ex.printStackTrace();
+        try {
+            int res = client.login(username, password);
+            System.out.println(res);
+            switch (res) {
+                case 0:
+                    badLogin.setVisible(false);
+                    goodLogin.setVisible(true);
+                    break;
+
+                case 1:
+                    goodLogin.setVisible(false);
+                    badLogin.setVisible(true);
+                    break;
             }
 
-        
+        } catch (Exception ex) {
+            badLogin.setVisible(true);
+            ex.printStackTrace();
+        }
+
     }
 }
