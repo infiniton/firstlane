@@ -41,10 +41,13 @@ public class DBLink {
     // add user to database
     // 0 = success
     // 2 = error
-    public int addUser(String username, String password) {
-        try (PreparedStatement s = conn.prepareStatement("INSERT INTO users (username, password) VALUES (?, ?)")) {
+    public int addUser(String username, String password, String salt, String data) {
+        try (PreparedStatement s = conn
+                .prepareStatement("INSERT INTO users (username, password, salt, data) VALUES (?, ?, ?, ?)")) {
             s.setString(1, username);
             s.setString(2, password);
+            s.setString(3, salt);
+            s.setString(4, data);
             s.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -65,4 +68,33 @@ public class DBLink {
         }
         return null;
     }
+
+    public String getData(String username) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+            s.setString(1, username);
+            ResultSet rs = s.executeQuery();
+
+            while (rs.next()) {
+                return rs.getString("data");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+
+    }
+
+    public String getSalt(String username) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+            s.setString(1, username);
+            ResultSet rs = s.executeQuery();
+            while (rs.next()) {
+                return rs.getString("salt");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }
