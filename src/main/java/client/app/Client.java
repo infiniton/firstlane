@@ -6,12 +6,14 @@ import java.io.*;
 import org.json.JSONObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.*;
 
 
 public class Client {
     private HttpURLConnection con;
 
     private String user;
+    private String password;
 
     // instantiate password encoder
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -54,6 +56,7 @@ public class Client {
     public int login(String user, String password) throws IOException {
         System.out.println('\n' + "Logging in...");
         this.user = user;
+        this.password = password;
         String loginUrl = "http://localhost:8080/api/user?username=" + user;
 
         JSONObject req = new JSONObject();
@@ -66,50 +69,46 @@ public class Client {
         //compare password in db to password passed in
         if (passwordEncoder.matches(password, resp.getString("password"))) {
             System.out.println("Login successful");
+            this.user = user;
             return 0;
         } else {
             System.out.println("Login failed");
             return 1;
         }
-
     }
 
-    public void register(String user, String password) throws IOException {
+    public int register(String user, String password) throws IOException {
+        System.out.println('\n' + "Logging in...");
+        this.user = user;
         URL registerUrl = new URL("http://localhost:8080/api/user");
 
-        // configure connection
-        con = (HttpURLConnection) registerUrl.openConnection();
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Content-Type", "application/json");
-        con.setDoOutput(true);
-        con.setDoInput(true);
-        con.setUseCaches(false);
-        con.setAllowUserInteraction(false);
-        con.setConnectTimeout(5000);
-        con.setReadTimeout(5000);
+        JSONObject req = new JSONObject();
+        req.put("username", user);
+        req.put("password", passwordEncoder.encode(password));
+        req.put("data", " ");
 
-        // make jsonobject with user ans password
-        JSONObject json = new JSONObject();
-        json.put("username", user);
-        json.put("password", passwordEncoder.encode(password));
+        // generate random 32 character salt
+        String salt = AESUtils.saltGen();
+        req.put("salt", salt);
 
-        // send user and password to server
-        DataOutputStream out = new DataOutputStream(con.getOutputStream());
-        out.writeBytes(json.toString());
-        out.flush();
-        out.close();
+        String respBody = sendRequest(registerUrl.toString(), "POST", req.toString());
+        JSONObject resp = new JSONObject(respBody);
 
+        System.out.println("Registration successful");
 
-        // get response
-        BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
+        return 0;
+    }
 
-        while ((inputLine = in.readLine()) != null) {
-            response.append(inputLine);
-        }
+    public String decrypt(String strToDecrypt, String salt) {
 
-        
+        return AESUtils.decrypt(strToDecrypt, password, salt);
+    }
+
+    public JSONObject getUserData() throws IOException {
+        String userUrl = "http://localhost:8080/api/user?username=" + user;
+        String respBody = sendRequest(userUrl, "GET", "");
+        JSONObject resp = new JSONObject(respBody);
+        return resp;
     }
 
 }
