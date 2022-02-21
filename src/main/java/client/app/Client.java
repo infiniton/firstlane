@@ -14,6 +14,7 @@ public class Client {
 
     private String user;
     private String password;
+    private String salt;
 
     // instantiate password encoder
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -100,8 +101,30 @@ public class Client {
     }
 
     public String decrypt(String strToDecrypt, String salt) {
+        this.salt = salt;
 
         return AESUtils.decrypt(strToDecrypt, password, salt);
+    }
+
+    public int addPass(String name, String username, String pass, String url, String notes) throws IOException {
+        System.out.println('\n' + "Adding password...");
+        String addPassUrl = "http://localhost:8080/api/password" + user;
+
+        JSONObject req = new JSONObject();
+        req.put("user", user);
+        req.put("name", AESUtils.encrypt(name, password, salt));
+        req.put("username", AESUtils.encrypt(username, password, salt));
+        req.put("password", AESUtils.encrypt(pass, password, salt));
+        req.put("url", AESUtils.encrypt(url, password, salt));
+        req.put("notes", AESUtils.encrypt(notes, password, salt));
+
+
+        String respBody = sendRequest(addPassUrl, "POST", req.toString());
+        JSONObject resp = new JSONObject(respBody);
+
+        System.out.println("Password added");
+
+        return 0;
     }
 
     public JSONObject getUserData() throws IOException {
