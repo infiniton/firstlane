@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
+import java.util.UUID;
 
 import org.json.JSONObject;
 
@@ -67,6 +68,35 @@ public class DBLink {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public int addPassword(String user, String name, String username, String password, String url, String notes) {
+        try (PreparedStatement s = conn
+                .prepareStatement("INSERT INTO passwords (uuid, name, username, password, url, notes) VALUES (?, ?, ?, ?, ?, ?)")) {
+            s.setString(1, UUID.randomUUID().toString());
+            s.setString(2, name);
+            s.setString(3, username);
+            s.setString(4, password);
+            s.setString(5, url);
+            s.setString(6, notes);
+            s.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // add uuid to user data
+        try (PreparedStatement s = conn
+                .prepareStatement("UPDATE users SET data = CONCAT(data, ',' , ?) WHERE username = ?")) {
+            s.setString(1, UUID.randomUUID().toString());
+            s.setString(2, user);
+            s.executeUpdate();
+            return 0;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return 1;
     }
 
     public String getData(String username) {
