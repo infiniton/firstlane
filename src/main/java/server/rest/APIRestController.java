@@ -20,11 +20,11 @@ public class APIRestController {
         return "pong!";
     }
 
-//    @GetMapping("/exists")
-//    public String exists(@RequestParam String username) {
-//        DBLink db = new DBLink();
- //       return db.findUser(username) == 0 ? "true" : "false";
- //   }
+    // @GetMapping("/exists")
+    // public String exists(@RequestParam String username) {
+    // DBLink db = new DBLink();
+    // return db.findUser(username) == 0 ? "true" : "false";
+    // }
 
     // post request to get user
     @GetMapping(value = "/user", produces = "application/json")
@@ -63,4 +63,26 @@ public class APIRestController {
         }
         return json.toString();
     }
+
+    @PostMapping(value = "/password", consumes = "application/json", produces = "application/json")
+    public String addPassword(@RequestBody String body) {
+        System.out.println("POST Called with body: " + body);
+        DBLink db = new DBLink();
+        JSONObject json = new JSONObject(body);
+        String user = json.getString("user");
+        String name = json.getString("name");
+        String username = json.getString("username");
+        String password = json.getString("password");
+        String url = json.getString("url");
+        String notes = json.getString("notes");
+
+        if (db.findUser(username) == 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username not found");
+        }
+        if (db.addPassword(user, name, username, password, url, notes) != 0) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error adding password");
+        }
+        return json.toString();
+    }
+
 }
