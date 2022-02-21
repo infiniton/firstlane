@@ -37,6 +37,10 @@ public class APIRestController {
         JSONObject json = new JSONObject();
         json.put("username", username);
         json.put("password", db.getPassword(username));
+        System.out.println(db.getData(username));
+        json.put("data", db.getData(username));
+        json.put("salt", db.getSalt(username));
+        System.out.println(json.toString());
         return json.toString();
     }
 
@@ -48,10 +52,13 @@ public class APIRestController {
         JSONObject json = new JSONObject(body);
         String password = json.getString("password");
         String username = json.getString("username");
+        String salt = json.getString("salt");
+        String data = json.getString("data");
+
         if (db.findUser(username) == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username already taken");
         }
-        if (db.addUser(username, password) != 0) {
+        if (db.addUser(username, password, salt, data) != 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error adding user");
         }
         return json.toString();
