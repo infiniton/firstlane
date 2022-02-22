@@ -2,29 +2,41 @@ package client.app;
 
 import java.awt.*;
 import java.awt.event.*;
-import javax.swing.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
-import org.json.JSONObject;
+import javax.swing.*;
+import javax.imageio.ImageIO;
+
+
+//import org.json.JSONObject;
 
 public class Login extends JFrame implements ActionListener {
     JPanel panel;
-
     JLabel usernameLabel, passwordLabel, badLogin, goodLogin;
-
     JTextField usernameText;
     JPasswordField passwordText;
-
     JButton loginButton;
 
     Client client;
 
-    public Login(Client client) {
+    BufferedImage image;
+
+    public Login(Client client) throws IOException {
+
+        JFrame frame = new JFrame("FirstLane");
         this.client = client;
 
         SpringLayout layout = new SpringLayout();
 
         panel = new JPanel(layout);
+        frame.setContentPane(panel);
         panel.setBackground(Color.WHITE);
+
+        // set frame title to username
+        image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
+        setIconImage(image);
+        
 
         //add logo to panel
         ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
@@ -126,6 +138,9 @@ public class Login extends JFrame implements ActionListener {
                 case 0:
                     badLogin.setVisible(false);
                     goodLogin.setVisible(true);
+                    new AppCore(client);
+                    //remove login frame
+                    this.dispose();
                     break;
 
                 case 1:

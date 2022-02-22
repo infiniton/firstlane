@@ -16,7 +16,6 @@ public class Panel extends JPanel {
     private final Color BACK_COLOR = Color.WHITE;
     private int x1, y1, x2, y2; // coordinates of the mouse
 
-    private static int[][] pic;
 
     private static BufferedImage image = new BufferedImage(400, 400, BufferedImage.TYPE_INT_RGB);
 
@@ -39,9 +38,9 @@ public class Panel extends JPanel {
         this.addMouseMotionListener(handler);
     }
 
-    private void drawGraphicsOn() {
+    /*private void drawGraphicsOn() {
         g = getGraphics();
-    }
+    }*/
 
     private class MouseHandler extends MouseAdapter {
         public void mousePressed(MouseEvent e) {
