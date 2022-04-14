@@ -65,7 +65,9 @@ public class Client {
         req.put("password", password);
 
         String respBody = sendRequest(loginUrl, "GET", req.toString());
+        System.out.println(respBody);
         JSONObject resp = new JSONObject(respBody);
+        this.salt = resp.getString("salt");
 
         //compare password in db to password passed in
         if (passwordEncoder.matches(password, resp.getString("password"))) {
@@ -108,7 +110,10 @@ public class Client {
 
     public int addPass(String name, String username, String pass, String url, String notes) throws IOException {
         System.out.println('\n' + "Adding password...");
-        String addPassUrl = "http://localhost:8080/api/password" + user;
+        String addPassUrl = "http://localhost:8080/api/password";
+
+        System.out.println(password);
+        System.out.println(salt);
 
         JSONObject req = new JSONObject();
         req.put("user", user);
@@ -119,7 +124,9 @@ public class Client {
         req.put("notes", AESUtils.encrypt(notes, password, salt));
 
 
-        String respBody = sendRequest(addPassUrl, "POST", req.toString());
+        String reqBody = req.toString();
+        System.out.println("Calling server with body: " + reqBody);
+        String respBody = sendRequest(addPassUrl, "POST", reqBody);
         JSONObject resp = new JSONObject(respBody);
 
         System.out.println("Password added");

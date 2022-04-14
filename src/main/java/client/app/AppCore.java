@@ -10,11 +10,14 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 
 import org.json.JSONObject;
+import org.springframework.asm.Label;
 
 public class AppCore extends JFrame implements ActionListener {
 
-    JPanel panel;
-
+    JPanel mainPanel;
+    JPanel navPanel;
+    JPanel pwdPanel;
+    
     JList<String> list, dList;
     JScrollPane scrollPane, dScrollPane;
     DefaultListModel<String> model, dmodel;
@@ -38,9 +41,13 @@ public class AppCore extends JFrame implements ActionListener {
         setIconImage(image);
         
 
-        panel = new JPanel(layout);
-        frame.setContentPane(panel);
-        panel.setBackground(Color.WHITE);
+        mainPanel = new JPanel(layout);
+        frame.setContentPane(mainPanel);
+        mainPanel.setBackground(Color.WHITE);
+
+        FlowLayout flowLayout = new FlowLayout();
+        mainPanel.setLayout(flowLayout);
+
 
         // sidebar
         // **************************************************************************************/
@@ -48,8 +55,6 @@ public class AppCore extends JFrame implements ActionListener {
         dmodel = new DefaultListModel<>();
         dList = new JList<>(dmodel);
         dList.setFixedCellHeight(50);
-
-        addPass = new JButton("+");
 
         dScrollPane = new JScrollPane(dList);
         dScrollPane.setViewportView(dList);
@@ -65,21 +70,18 @@ public class AppCore extends JFrame implements ActionListener {
             }
         };
 
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, -500, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, dScrollPane, 10, SpringLayout.NORTH, panel);
+//        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, -500, SpringLayout.HORIZONTAL_CENTER, mainPanel);
+//        layout.putConstraint(SpringLayout.NORTH, dScrollPane, 10, SpringLayout.NORTH, mainPanel);
         dScrollPane.setPreferredSize(new Dimension(250, 600));
 
-        LineBorder roundedLineBorder = new LineBorder(new Color(27, 38, 79), 1, true);
-        dScrollPane.setBorder(roundedLineBorder);
-
-        // dList.setBorder(roundedLineBorder);
-        panel.add(dScrollPane);
+ //       LineBorder roundedLineBorder = new LineBorder(new Color(27, 38, 79), 1, true);
+ //       dScrollPane.setBorder(roundedLineBorder);
 
         ImageIcon plus = new ImageIcon("./src/main/java/client/app/content/plus.png");
 
         addPass = new JButton(plus);
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPass, -500, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, addPass, 625, SpringLayout.NORTH, panel);
+//        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPass, -500, SpringLayout.HORIZONTAL_CENTER, mainPanel);
+//        layout.putConstraint(SpringLayout.NORTH, addPass, 625, SpringLayout.NORTH, mainPanel);
         addPass.setPreferredSize(new Dimension(250, 50));
         addPass.addActionListener(this);
         // set background to transparent
@@ -87,10 +89,21 @@ public class AppCore extends JFrame implements ActionListener {
         addPass.setContentAreaFilled(false);
         addPass.setBorderPainted(false);
 
-        panel.add(addPass);
+        navPanel = new JPanel();
+        BoxLayout boxLayout = new BoxLayout(navPanel, BoxLayout.Y_AXIS);
+        navPanel.setLayout(boxLayout);
+        navPanel.setBackground(Color.WHITE);
+
+        navPanel.add(new JLabel("Choose to edit an item or add a new one:"));
+        navPanel.add(dScrollPane);
+        navPanel.add(addPass);
+
+        // dList.setBorder(roundedLineBorder);
+        mainPanel.add(navPanel);
+
         /**************************************************************************************/
 
-        add(panel, BorderLayout.CENTER);
+        add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
         setSize(screenSize.width / 2, screenSize.height / 2);
         setResizable(false);
@@ -115,27 +128,59 @@ public class AppCore extends JFrame implements ActionListener {
         data = client.decrypt(data, salt);
         System.out.println(data);
 
-        // password add pane ****************************************************************************************** /
-        JPanel addPane = new JPanel();
-        addPane.setBackground(Color.WHITE);
-        addPane.setPreferredSize(new Dimension(250, 600));
-        addPane.setLayout(new BoxLayout(addPane, BoxLayout.Y_AXIS));
+        // password add/manage pane ******************************************************************************************/\
+        pwdPanel = new JPanel();
+        pwdPanel.setBackground(Color.WHITE);
+       //pwdPanel.setPreferredSize(new Dimension(450, 600));
+        pwdPanel.setLayout(new BoxLayout(pwdPanel, BoxLayout.Y_AXIS));
         
         JLabel addLabel = new JLabel("Add Password");
         addLabel.setFont(new Font("Arial", Font.BOLD, 20));
         addLabel.setForeground(new Color(27, 38, 79));
-        addPane.add(addLabel);
+        pwdPanel.add(addLabel);
 
         JLabel nameLabel = new JLabel("Name");
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         nameLabel.setForeground(new Color(27, 38, 79));
-        addPane.add(nameLabel);
+        pwdPanel.add(nameLabel);
 
         JTextField name = new JTextField();
         name.setFont(new Font("Arial", Font.PLAIN, 16));
         name.setForeground(new Color(27, 38, 79));
-        addPane.add(name);
-        
+        pwdPanel.add(name);
+
+        JButton save = new JButton("Save");
+        save.setFont(new Font("Arial", Font.PLAIN, 16));
+        save.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(save);
+
+        JButton cancel = new JButton("Cancel");
+        cancel.setFont(new Font("Arial", Font.PLAIN, 16));
+        cancel.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(cancel);
+
+
+        pwdPanel.setVisible(false);
+
+
+    //    layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, name, 0, SpringLayout.HORIZONTAL_CENTER, editPanel);
+
+        mainPanel.add(pwdPanel);
+
+        // actionlistener for save button
+        save.addActionListener(l -> {
+            String itemName = name.getText();
+
+            dmodel.addElement(itemName);
+
+            try {
+                client.addPass(itemName, "moo", "boo", "url", "notes");
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    
         
 
     }
@@ -145,6 +190,8 @@ public class AppCore extends JFrame implements ActionListener {
         if (e.getSource() == addPass) {
             System.out.println("Add button pressed");
             // open add password window
+            pwdPanel.setVisible(true);
+           System.out.println("chuk");
 
         }
     }

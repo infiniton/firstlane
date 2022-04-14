@@ -72,18 +72,20 @@ public class DBLink {
 
     public int addPassword(String user, String name, String username, String password, String url, String notes) {
         try (PreparedStatement s = conn
-                .prepareStatement("INSERT INTO passwords (uuid, name, username, password, url, notes) VALUES (?, ?, ?, ?, ?, ?)")) {
+                .prepareStatement("INSERT INTO passwords (uuid, user, name, username, password, url, notes) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             s.setString(1, UUID.randomUUID().toString());
-            s.setString(2, name);
-            s.setString(3, username);
-            s.setString(4, password);
-            s.setString(5, url);
-            s.setString(6, notes);
+            s.setString(2, user);
+            s.setString(3, name);
+            s.setString(4, username);
+            s.setString(5, password);
+            s.setString(6, url);
+            s.setString(7, notes);
             s.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+/*        
         // add uuid to user data
         try (PreparedStatement s = conn
                 .prepareStatement("UPDATE users SET data = CONCAT(data, ',' , ?) WHERE username = ?")) {
@@ -95,16 +97,24 @@ public class DBLink {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+*/
         return 1;
     }
 
     public String getData(String username) {
-        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM passwords WHERE username = ?")) {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
 
+            JSONObject json = new JSONObject();
+
             while (rs.next()) {
+                
+
+                rs.getString("name"), rs.getString("username"), rs.getString("password"), rs.getString("url"), rs.getString("notes")
+
+
+                json.put(rs.getString("uuid"), valueOf());
                 return rs.getString("data");
             }
         } catch (Exception e) {

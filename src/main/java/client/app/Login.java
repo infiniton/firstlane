@@ -8,10 +8,9 @@ import java.io.IOException;
 import javax.swing.*;
 import javax.imageio.ImageIO;
 
-
 //import org.json.JSONObject;
 
-public class Login extends JFrame implements ActionListener {
+public class Login extends JFrame implements ActionListener, KeyListener {
     JPanel panel;
     JLabel usernameLabel, passwordLabel, badLogin, goodLogin;
     JTextField usernameText;
@@ -36,15 +35,15 @@ public class Login extends JFrame implements ActionListener {
         // set frame title to username
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
         setIconImage(image);
-        
 
-        //add logo to panel
+        // add logo to panel
         ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
-        ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 50,logo.getIconHeight() / 50, Image.SCALE_SMOOTH));
+        ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 50,
+                logo.getIconHeight() / 50, Image.SCALE_SMOOTH));
         JLabel scaledLogo = new JLabel(scaledImage);
         panel.add(scaledLogo);
 
-        //center the middle of logo with middle of frame
+        // center the middle of logo with middle of frame
         scaledLogo.setPreferredSize(new Dimension(475, 125));
 
         usernameLabel = new JLabel("Username: ");
@@ -94,11 +93,9 @@ public class Login extends JFrame implements ActionListener {
 
         ImageIcon chekcPic = new ImageIcon("./src/main/java/client/app/content/check.png");
         ImageIcon scaledCheckPic = new ImageIcon(chekcPic.getImage().getScaledInstance(chekcPic.getIconWidth() / 15,
-        chekcPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
+                chekcPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
         goodLogin = new JLabel(scaledCheckPic);
         goodLogin.setVisible(false);
-
-
 
         panel.add(badLogin);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, badLogin, 0, SpringLayout.HORIZONTAL_CENTER, panel);
@@ -108,12 +105,15 @@ public class Login extends JFrame implements ActionListener {
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, goodLogin, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         layout.putConstraint(SpringLayout.NORTH, goodLogin, 350, SpringLayout.NORTH, panel);
 
-
         loginButton.addActionListener(this);
+        passwordText.addKeyListener(this);
+
         add(panel, BorderLayout.CENTER);
         setSize(500, 500);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        frame.getRootPane().setDefaultButton(loginButton);
 
         // center the frame
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
@@ -122,10 +122,8 @@ public class Login extends JFrame implements ActionListener {
         // set the frame to be un-resizable
         this.setResizable(false);
     }
-    
-    @Override
-    public void actionPerformed(ActionEvent e) {
 
+    private void login() {
         System.out.println("Login button pressed");
 
         String username = usernameText.getText();
@@ -139,7 +137,7 @@ public class Login extends JFrame implements ActionListener {
                     badLogin.setVisible(false);
                     goodLogin.setVisible(true);
                     new AppCore(client);
-                    //remove login frame
+                    // remove login frame
                     this.dispose();
                     break;
 
@@ -154,5 +152,27 @@ public class Login extends JFrame implements ActionListener {
             ex.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void keyPressed(KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+            login();
+
+        }
+
+    }
+
+    @Override
+    public void keyTyped(KeyEvent e) {
+    }
+
+    @Override
+    public void keyReleased(KeyEvent e) {
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        login();
     }
 }
