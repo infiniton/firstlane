@@ -26,20 +26,25 @@ public class APIRestController {
     // return db.findUser(username) == 0 ? "true" : "false";
     // }
 
+    @GetMapping("/test")
+    public String test(@RequestParam String username) {
+        return username;
+    }
+
     // post request to get user
     @GetMapping(value = "/user", produces = "application/json")
-    public String getUser(@RequestParam String username) {
-        System.out.println("GET Called with username: " + username);
+    public String getUser(@RequestParam String user) {
+        System.out.println("GET Called with username: " + user);
         DBLink db = new DBLink();
-        if (db.findUser(username) != 0) {
+        if (db.findUser(user) != 0) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found");
         }
         JSONObject json = new JSONObject();
-        json.put("username", username);
-        json.put("password", db.getPassword(username));
-        System.out.println(db.getData(username));
-        json.put("data", db.getData(username));
-        json.put("salt", db.getSalt(username));
+        json.put("user", user);
+        json.put("password", db.getPassword(user));
+        System.out.println(db.getData(user));
+        json.put("data", db.getData(user));
+        json.put("salt", db.getSalt(user));
         System.out.println(json.toString());
         return json.toString();
     }
@@ -51,14 +56,14 @@ public class APIRestController {
         DBLink db = new DBLink();
         JSONObject json = new JSONObject(body);
         String password = json.getString("password");
-        String username = json.getString("username");
+        String user = json.getString("user");
         String salt = json.getString("salt");
         String data = json.getString("data");
 
-        if (db.findUser(username) == 0) {
+        if (db.findUser(user) == 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username already taken");
         }
-        if (db.addUser(username, password, salt, data) != 0) {
+        if (db.addUser(user, password, salt, data) != 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error adding user");
         }
         return json.toString();

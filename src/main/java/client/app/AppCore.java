@@ -20,7 +20,7 @@ public class AppCore extends JFrame implements ActionListener {
     DefaultListModel<String> model, dmodel;
     JButton addPass, save;
     JTextField message;
-    
+
     int maxSize;
     BufferedImage image;
     String user, data, salt;
@@ -36,7 +36,6 @@ public class AppCore extends JFrame implements ActionListener {
 
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
         setIconImage(image);
-        
 
         panel = new JPanel(layout);
         frame.setContentPane(panel);
@@ -99,12 +98,11 @@ public class AppCore extends JFrame implements ActionListener {
 
         // get user data from server
         JSONObject userData = client.getUserData();
-        user = userData.getString("username");
+        user = userData.getString("user");
         System.out.println(user);
 
         // set frame title to username
         setTitle("FirstLane | " + user);
-
 
         // get data from server
         System.out.println(userData);
@@ -115,12 +113,14 @@ public class AppCore extends JFrame implements ActionListener {
         data = client.decrypt(data, salt);
         System.out.println(data);
 
-        // password add pane ****************************************************************************************** /
+        // password add pane
+        // ******************************************************************************************
+        // /
         JPanel addPane = new JPanel();
         addPane.setBackground(Color.WHITE);
         addPane.setPreferredSize(new Dimension(250, 600));
         addPane.setLayout(new BoxLayout(addPane, BoxLayout.Y_AXIS));
-        
+
         JLabel addLabel = new JLabel("Add Password");
         addLabel.setFont(new Font("Arial", Font.BOLD, 20));
         addLabel.setForeground(new Color(27, 38, 79));
@@ -135,8 +135,6 @@ public class AppCore extends JFrame implements ActionListener {
         name.setFont(new Font("Arial", Font.PLAIN, 16));
         name.setForeground(new Color(27, 38, 79));
         addPane.add(name);
-        
-        
 
     }
 
