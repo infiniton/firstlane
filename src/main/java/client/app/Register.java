@@ -33,7 +33,9 @@ public class Register extends JFrame implements ActionListener {
         panel.add(scaledLogo);
 
         //center the middle of logo with middle of frame
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, scaledLogo, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         scaledLogo.setPreferredSize(new Dimension(475, 125));
+
 
         usernameLabel = new JLabel("Username: ");
         panel.add(usernameLabel);
@@ -168,7 +170,9 @@ public class Register extends JFrame implements ActionListener {
                     case 0:
                         badReg.setVisible(false);
                         goodReg.setVisible(true);
-                        new AppCore(client);
+                        //registration successful popup
+                        JOptionPane.showMessageDialog(null, "Registration successful!", "Registration", JOptionPane.INFORMATION_MESSAGE);
+                        new Login(client);
                         //remove login frame
                         this.dispose();
                         break;

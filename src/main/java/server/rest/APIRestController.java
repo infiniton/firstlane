@@ -87,7 +87,24 @@ public class APIRestController {
         if (db.addPassword(user, name, username, password, url, notes) != 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error adding password");
         }
+        System.out.println(json.toString());
         return json.toString();
     }
 
+    @GetMapping(value = "/password", produces = "application/json")
+    public String getPassword(@RequestParam String uuid) {
+        System.out.println("GET Called with username: " + uuid);
+        DBLink db = new DBLink();
+        JSONArray json = new JSONArray();
+        JSONObject jsonObject = new JSONObject();
+        jsonObject.put("name", "name");
+        jsonObject.put("username", "username");
+        jsonObject.put("password", "password");
+        jsonObject.put("url", "url");
+        jsonObject.put("notes", "notes");
+        json.put(jsonObject);
+
+        return json.toString();
+
+    }
 }

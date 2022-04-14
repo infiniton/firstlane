@@ -39,6 +39,7 @@ public class LoginGUI {
         frame.add(scaledLogo);
 
         //center the middle of logo with middle of frame
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, scaledLogo, 250, SpringLayout.HORIZONTAL_CENTER, frame);
         scaledLogo.setPreferredSize(new Dimension(475, 225));
 
         JButton loginButton = new JButton("Login");

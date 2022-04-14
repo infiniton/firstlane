@@ -43,7 +43,8 @@ public class Login extends JFrame implements ActionListener, KeyListener {
         JLabel scaledLogo = new JLabel(scaledImage);
         panel.add(scaledLogo);
 
-        // center the middle of logo with middle of frame
+        //center the middle of logo with middle of frame
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, scaledLogo, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         scaledLogo.setPreferredSize(new Dimension(475, 125));
 
         usernameLabel = new JLabel("Username: ");

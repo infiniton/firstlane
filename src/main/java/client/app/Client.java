@@ -3,6 +3,7 @@ package client.app;
 import java.net.*;
 import java.io.*;
 
+import org.apache.catalina.User;
 import org.json.JSONObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -42,7 +43,8 @@ public class Client {
             out.close();
         }
 
-        // get response
+        // get response from server
+        System.out.println("Response");
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
@@ -127,6 +129,7 @@ public class Client {
         String reqBody = req.toString();
         System.out.println("Calling server with body: " + reqBody);
         String respBody = sendRequest(addPassUrl, "POST", reqBody);
+        System.out.println(respBody);
         JSONObject resp = new JSONObject(respBody);
 
         System.out.println("Password added");
@@ -137,6 +140,31 @@ public class Client {
     public JSONObject getUserData() throws IOException {
         String userUrl = "http://localhost:8080/api/user?user=" + user;
         String respBody = sendRequest(userUrl, "GET", "");
+        JSONObject resp = new JSONObject(respBody);
+        return resp;
+    }
+
+    public String[] getUUIDs(String user) throws IOException {
+        String passUrl = "http://localhost:8080/api/user?user=" + user;
+        String respBody = sendRequest(passUrl, "GET", "");
+
+        JSONObject resp = new JSONObject(respBody);
+        System.out.println("response: " + resp);
+        //get data
+        String data = resp.getString("data");
+        
+        //data formatted as uuid separated by commas
+        //JSONObject dataJson = new JSONObject(data);
+        String[] dataArray = data.split(",");
+        System.out.println("response: " + data);
+
+        return dataArray;
+
+    }
+
+    public JSONObject getPass(String uuid) throws IOException {
+        String passUrl = "http://localhost:8080/api/password?uuid=" + uuid;
+        String respBody = sendRequest(passUrl, "GET", "");
         JSONObject resp = new JSONObject(respBody);
         return resp;
     }

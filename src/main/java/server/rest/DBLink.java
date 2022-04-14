@@ -71,8 +71,10 @@ public class DBLink {
     }
 
     public int addPassword(String user, String name, String username, String password, String url, String notes) {
+
         try (PreparedStatement s = conn
-                .prepareStatement("INSERT INTO passwords (uuid, user, name, username, password, url, notes) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
+                .prepareStatement(
+                        "INSERT INTO data (uuid, user, name, username, password, url, notes) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
             s.setString(1, UUID.randomUUID().toString());
             s.setString(2, user);
             s.setString(3, name);
@@ -85,7 +87,6 @@ public class DBLink {
             e.printStackTrace();
         }
 
-/*        
         // add uuid to user data
         try (PreparedStatement s = conn
                 .prepareStatement("UPDATE users SET data = CONCAT(data, ',' , ?) WHERE user = ?")) {
@@ -97,7 +98,7 @@ public class DBLink {
         } catch (Exception e) {
             e.printStackTrace();
         }
-*/
+
         return 1;
     }
 
@@ -109,12 +110,11 @@ public class DBLink {
             JSONObject json = new JSONObject();
 
             while (rs.next()) {
-                
 
-                rs.getString("name"), rs.getString("username"), rs.getString("password"), rs.getString("url"), rs.getString("notes")
+                // rs.getString("name"), rs.getString("username"), rs.getString("password"),
+                // rs.getString("url"), rs.getString("notes")
 
-
-                json.put(rs.getString("uuid"), valueOf());
+                // json.put(rs.getString("uuid"), valueOf());
                 return rs.getString("data");
             }
         } catch (Exception e) {
@@ -137,4 +137,24 @@ public class DBLink {
         return null;
     }
 
+    public JSONObject getPass(String uuid) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM data WHERE uuid = ?")) {
+            s.setString(1, uuid);
+            ResultSet rs = s.executeQuery();
+            JSONObject json = new JSONObject();
+
+            while (rs.next()) {
+                json.put("name", rs.getString("name"));
+                json.put("username", rs.getString("username"));
+                json.put("password", rs.getString("password"));
+                json.put("url", rs.getString("url"));
+                json.put("notes", rs.getString("notes"));
+            }
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+
+    }
 }

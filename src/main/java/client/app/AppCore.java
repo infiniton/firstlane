@@ -37,6 +37,7 @@ public class AppCore extends JFrame implements ActionListener {
         SpringLayout layout = new SpringLayout();
         JFrame frame = new JFrame("FirstLane");
 
+
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
         setIconImage(image);
 
@@ -50,6 +51,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         // sidebar
         // **************************************************************************************/
+
 
         dmodel = new DefaultListModel<>();
         dList = new JList<>(dmodel);
@@ -68,6 +70,7 @@ public class AppCore extends JFrame implements ActionListener {
                 }
             }
         };
+
 
 //        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, -500, SpringLayout.HORIZONTAL_CENTER, mainPanel);
 //        layout.putConstraint(SpringLayout.NORTH, dScrollPane, 10, SpringLayout.NORTH, mainPanel);
@@ -104,7 +107,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        setSize(screenSize.width / 2, screenSize.height / 2);
+        setSize(screenSize.width, screenSize.height);
         setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,6 +119,13 @@ public class AppCore extends JFrame implements ActionListener {
 
         // set frame title to username
         setTitle("FirstLane | " + user);
+
+        for (String uuid : client.getUUIDs(user)) {
+            dmodel.addElement(uuid);
+        }
+        //remove first element
+        dmodel.remove(0);
+
 
         // get data from server
         System.out.println(userData);
@@ -129,7 +139,7 @@ public class AppCore extends JFrame implements ActionListener {
         // password add/manage pane ******************************************************************************************/\
         pwdPanel = new JPanel();
         pwdPanel.setBackground(Color.WHITE);
-       //pwdPanel.setPreferredSize(new Dimension(450, 600));
+       pwdPanel.setPreferredSize(new Dimension(450, 400));
         pwdPanel.setLayout(new BoxLayout(pwdPanel, BoxLayout.Y_AXIS));
         
         JLabel addLabel = new JLabel("Add Password");
@@ -146,6 +156,46 @@ public class AppCore extends JFrame implements ActionListener {
         name.setFont(new Font("Arial", Font.PLAIN, 16));
         name.setForeground(new Color(27, 38, 79));
         pwdPanel.add(name);
+
+        JLabel urlLabel = new JLabel("URL");
+        urlLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        urlLabel.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(urlLabel);
+
+        JTextField url = new JTextField();
+        url.setFont(new Font("Arial", Font.PLAIN, 16));
+        url.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(url);
+
+        JLabel usernameLabel = new JLabel("Username");
+        usernameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        usernameLabel.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(usernameLabel);
+
+        JTextField username = new JTextField();
+        username.setFont(new Font("Arial", Font.PLAIN, 16));
+        username.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(username);
+
+        JLabel passwordLabel = new JLabel("Password");
+        passwordLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        passwordLabel.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(passwordLabel);
+
+        JTextField password = new JTextField();
+        password.setFont(new Font("Arial", Font.PLAIN, 16));
+        password.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(password);
+
+        JLabel notesLabel = new JLabel("Notes");
+        notesLabel.setFont(new Font("Arial", Font.PLAIN, 16));
+        notesLabel.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(notesLabel);
+
+        JTextArea notes = new JTextArea();
+        notes.setFont(new Font("Arial", Font.PLAIN, 16));
+        notes.setForeground(new Color(27, 38, 79));
+        pwdPanel.add(notes);
 
         JButton save = new JButton("Save");
         save.setFont(new Font("Arial", Font.PLAIN, 16));
@@ -172,7 +222,8 @@ public class AppCore extends JFrame implements ActionListener {
             dmodel.addElement(itemName);
 
             try {
-                client.addPass(itemName, "moo", "boo", "url", "notes");
+                System.out.println("hi");
+                client.addPass(itemName, username.getText(), password.getText(), url.getText(), notes.getText());
             }
             catch (Exception e) {
                 e.printStackTrace();
