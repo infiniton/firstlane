@@ -29,7 +29,7 @@ public class DBLink {
     // 1 = user does not
     // 2 = error
     public int findUser(String username) {
-        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE user = ?")) {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
             return rs.next() ? 0 : 1;
@@ -44,7 +44,7 @@ public class DBLink {
     // 2 = error
     public int addUser(String username, String password, String salt, String data) {
         try (PreparedStatement s = conn
-                .prepareStatement("INSERT INTO users (username, password, salt, data) VALUES (?, ?, ?, ?)")) {
+                .prepareStatement("INSERT INTO users (user, password, salt, data) VALUES (?, ?, ?, ?)")) {
             s.setString(1, username);
             s.setString(2, password);
             s.setString(3, salt);
@@ -58,7 +58,7 @@ public class DBLink {
     }
 
     public String getPassword(String username) {
-        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE user = ?")) {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
             while (rs.next()) {
@@ -88,7 +88,7 @@ public class DBLink {
 /*        
         // add uuid to user data
         try (PreparedStatement s = conn
-                .prepareStatement("UPDATE users SET data = CONCAT(data, ',' , ?) WHERE username = ?")) {
+                .prepareStatement("UPDATE users SET data = CONCAT(data, ',' , ?) WHERE user = ?")) {
             s.setString(1, UUID.randomUUID().toString());
             s.setString(2, user);
             s.executeUpdate();
@@ -102,7 +102,7 @@ public class DBLink {
     }
 
     public String getData(String username) {
-        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM passwords WHERE username = ?")) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE user = ?")) {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
 
@@ -125,7 +125,7 @@ public class DBLink {
     }
 
     public String getSalt(String username) {
-        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE username = ?")) {
+        try (PreparedStatement s = conn.prepareStatement("SELECT * FROM users WHERE user = ?")) {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
             while (rs.next()) {

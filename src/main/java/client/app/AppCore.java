@@ -23,7 +23,7 @@ public class AppCore extends JFrame implements ActionListener {
     DefaultListModel<String> model, dmodel;
     JButton addPass, save;
     JTextField message;
-    
+
     int maxSize;
     BufferedImage image;
     String user, data, salt;
@@ -39,7 +39,6 @@ public class AppCore extends JFrame implements ActionListener {
 
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
         setIconImage(image);
-        
 
         mainPanel = new JPanel(layout);
         frame.setContentPane(mainPanel);
@@ -112,12 +111,11 @@ public class AppCore extends JFrame implements ActionListener {
 
         // get user data from server
         JSONObject userData = client.getUserData();
-        user = userData.getString("username");
+        user = userData.getString("user");
         System.out.println(user);
 
         // set frame title to username
         setTitle("FirstLane | " + user);
-
 
         // get data from server
         System.out.println(userData);

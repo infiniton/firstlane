@@ -58,10 +58,10 @@ public class Client {
         System.out.println('\n' + "Logging in...");
         this.user = user;
         this.password = password;
-        String loginUrl = "http://localhost:8080/api/user?username=" + user;
+        String loginUrl = "http://localhost:8080/api/user?user=" + user;
 
         JSONObject req = new JSONObject();
-        req.put("username", user);
+        req.put("user", user);
         req.put("password", password);
 
         String respBody = sendRequest(loginUrl, "GET", req.toString());
@@ -86,7 +86,7 @@ public class Client {
         URL registerUrl = new URL("http://localhost:8080/api/user");
 
         JSONObject req = new JSONObject();
-        req.put("username", user);
+        req.put("user", user);
         req.put("password", passwordEncoder.encode(password));
         req.put("data", " ");
 
@@ -135,7 +135,7 @@ public class Client {
     }
 
     public JSONObject getUserData() throws IOException {
-        String userUrl = "http://localhost:8080/api/user?username=" + user;
+        String userUrl = "http://localhost:8080/api/user?user=" + user;
         String respBody = sendRequest(userUrl, "GET", "");
         JSONObject resp = new JSONObject(respBody);
         return resp;
