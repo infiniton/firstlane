@@ -2,6 +2,9 @@ package client.app;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.ListSelectionEvent;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
@@ -16,8 +19,8 @@ public class AppCore extends JFrame implements ActionListener {
 
     JPanel mainPanel;
     JPanel navPanel;
-    JPanel pwdPanel;
-    
+    JPanel addPanel;
+
     JList<String> list, dList;
     JScrollPane scrollPane, dScrollPane;
     DefaultListModel<String> model, dmodel;
@@ -37,7 +40,6 @@ public class AppCore extends JFrame implements ActionListener {
         SpringLayout layout = new SpringLayout();
         JFrame frame = new JFrame("FirstLane");
 
-
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
         setIconImage(image);
 
@@ -48,10 +50,8 @@ public class AppCore extends JFrame implements ActionListener {
         FlowLayout flowLayout = new FlowLayout();
         mainPanel.setLayout(flowLayout);
 
-
         // sidebar
         // **************************************************************************************/
-
 
         dmodel = new DefaultListModel<>();
         dList = new JList<>(dmodel);
@@ -70,20 +70,24 @@ public class AppCore extends JFrame implements ActionListener {
                 }
             }
         };
+        dList.addMouseListener(mouseListener);
 
-
-//        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, -500, SpringLayout.HORIZONTAL_CENTER, mainPanel);
-//        layout.putConstraint(SpringLayout.NORTH, dScrollPane, 10, SpringLayout.NORTH, mainPanel);
+        // layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, -500,
+        // SpringLayout.HORIZONTAL_CENTER, mainPanel);
+        // layout.putConstraint(SpringLayout.NORTH, dScrollPane, 10, SpringLayout.NORTH,
+        // mainPanel);
         dScrollPane.setPreferredSize(new Dimension(250, 600));
 
- //       LineBorder roundedLineBorder = new LineBorder(new Color(27, 38, 79), 1, true);
- //       dScrollPane.setBorder(roundedLineBorder);
+        // LineBorder roundedLineBorder = new LineBorder(new Color(27, 38, 79), 1,
+        // true);
+        // dScrollPane.setBorder(roundedLineBorder);
 
         ImageIcon plus = new ImageIcon("./src/main/java/client/app/content/plus.png");
 
         addPass = new JButton(plus);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPass, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
-//        layout.putConstraint(SpringLayout.NORTH, addPass, 625, SpringLayout.NORTH, mainPanel);
+        // layout.putConstraint(SpringLayout.NORTH, addPass, 625, SpringLayout.NORTH,
+        // mainPanel);
         addPass.setPreferredSize(new Dimension(250, 50));
         addPass.addActionListener(this);
         // set background to transparent
@@ -107,8 +111,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        setSize(screenSize.width-200, screenSize.height-200);
-        //setResizable(false);
+        setSize(screenSize.width - 200, screenSize.height - 200);
+        // setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -120,94 +124,134 @@ public class AppCore extends JFrame implements ActionListener {
         // set frame title to username
         setTitle("FirstLane | " + user);
 
-          
-
         // get data from server
         System.out.println(userData);
-        data = userData.getString("data");
-        salt = userData.getString("salt");
+        try {
+            salt = userData.getString("salt");
+            data = userData.getString("data");
+
+            // decrypt data
+            data = client.decrypt(data, salt);
+            System.out.println("\ndecrypted data: " + data);
+        } catch (Exception e) {
+            System.out.println("Error: " + e);
+        }
+
+        // parse data
+        if (data != null) {
+            JSONObject json = new JSONObject(data);
+            // for each item in data
+            for (String key : json.keySet()) {
+                // add item name to list
+                dmodel.addElement(key);
+
+            }
+        }
+
+        // password display panel
+        // **************************************************************************************/\
+        //when a password is selected, display it
+        dList.addListSelectionListener(new ListSelectionListener() {
+            public void valueChanged(ListSelectionEvent e) {
+                String selected = dList.getSelectedValue();
+                System.out.println(selected);
+                if (selected != null) {
+                    // make json object from data
+                    JSONObject json = new JSONObject(data);
+                    // get password
+                    JSONObject password = json.getJSONObject(selected);
+                    // get password data
+                    String pass = password.getString("password");
+
+                    System.out.println(pass);
+                    // decrypt password
+
+                    // display password in popup
+                    JOptionPane.showMessageDialog(null, pass);
+
+                }
+            }
+        });
 
 
+        // password add panel
+        // ******************************************************************************************/\
+        addPanel = new JPanel();
+        addPanel.setBackground(Color.WHITE);
+        addPanel.setPreferredSize(new Dimension(450, 400));
+        addPanel.setLayout(new BoxLayout(addPanel, BoxLayout.Y_AXIS));
 
-
-        // password add/manage pane ******************************************************************************************/\
-        pwdPanel = new JPanel();
-        pwdPanel.setBackground(Color.WHITE);
-        pwdPanel.setPreferredSize(new Dimension(450, 400));
-        pwdPanel.setLayout(new BoxLayout(pwdPanel, BoxLayout.Y_AXIS));
-        
-        JLabel addLabel = new JLabel("Add Password");
+        JLabel addLabel = new JLabel("View Password");
         addLabel.setFont(new Font("Arial", Font.BOLD, 20));
         addLabel.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(addLabel);
+        addPanel.add(addLabel);
 
         JLabel nameLabel = new JLabel("Name");
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         nameLabel.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(nameLabel);
+        addPanel.add(nameLabel);
 
         JTextField name = new JTextField();
         name.setFont(new Font("Arial", Font.PLAIN, 16));
         name.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(name);
+        addPanel.add(name);
 
         JLabel urlLabel = new JLabel("URL");
         urlLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         urlLabel.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(urlLabel);
+        addPanel.add(urlLabel);
 
         JTextField url = new JTextField();
         url.setFont(new Font("Arial", Font.PLAIN, 16));
         url.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(url);
+        addPanel.add(url);
 
         JLabel usernameLabel = new JLabel("Username");
         usernameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         usernameLabel.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(usernameLabel);
+        addPanel.add(usernameLabel);
 
         JTextField username = new JTextField();
         username.setFont(new Font("Arial", Font.PLAIN, 16));
         username.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(username);
+        addPanel.add(username);
 
         JLabel passwordLabel = new JLabel("Password");
         passwordLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         passwordLabel.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(passwordLabel);
+        addPanel.add(passwordLabel);
 
         JTextField password = new JTextField();
         password.setFont(new Font("Arial", Font.PLAIN, 16));
         password.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(password);
+        addPanel.add(password);
 
         JLabel notesLabel = new JLabel("Notes");
         notesLabel.setFont(new Font("Arial", Font.PLAIN, 16));
         notesLabel.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(notesLabel);
+        addPanel.add(notesLabel);
 
         JTextArea notes = new JTextArea();
         notes.setFont(new Font("Arial", Font.PLAIN, 16));
         notes.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(notes);
+        addPanel.add(notes);
 
         JButton save = new JButton("Save");
         save.setFont(new Font("Arial", Font.PLAIN, 16));
         save.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(save);
+        addPanel.add(save);
 
         JButton cancel = new JButton("Cancel");
         cancel.setFont(new Font("Arial", Font.PLAIN, 16));
         cancel.setForeground(new Color(27, 38, 79));
-        pwdPanel.add(cancel);
+        addPanel.add(cancel);
 
+        addPanel.setVisible(false);
 
-        pwdPanel.setVisible(false);
+        // layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, name, 0,
+        // SpringLayout.HORIZONTAL_CENTER, editPanel);
 
-
-    //    layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, name, 0, SpringLayout.HORIZONTAL_CENTER, editPanel);
-
-        mainPanel.add(pwdPanel);
+        mainPanel.add(addPanel);
 
         // actionlistener for save button
         save.addActionListener(l -> {
@@ -218,13 +262,10 @@ public class AppCore extends JFrame implements ActionListener {
             try {
                 System.out.println("hi");
                 client.addPass(itemName, username.getText(), password.getText(), url.getText(), notes.getText());
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
-    
-        
 
     }
 
@@ -233,8 +274,8 @@ public class AppCore extends JFrame implements ActionListener {
         if (e.getSource() == addPass) {
             System.out.println("Add button pressed");
             // open add password window
-            pwdPanel.setVisible(true);
-           System.out.println("chuk");
+            addPanel.setVisible(true);
+            System.out.println("chuk");
 
         }
     }

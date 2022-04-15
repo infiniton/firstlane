@@ -74,8 +74,10 @@ public class APIRestController {
         System.out.println("POST Called with body: " + body);
         DBLink db = new DBLink();
         JSONObject json = new JSONObject(body);
-        /*String user = json.getString("user");
-        String name = json.getString("name");
+        String user = json.getString("user");
+        //remove user from json
+        json.remove("user");
+        /*String name = json.getString("name");
         String username = json.getString("username");
         String password = json.getString("password");
         String url = json.getString("url");

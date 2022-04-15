@@ -78,7 +78,7 @@ public class DBLink {
       
         //update data in users db
         try (PreparedStatement s = conn.prepareStatement("UPDATE users SET data = ? WHERE user = ?")) {
-            s.setString(1, json.toString());
+            s.setString(1, json.getString("data").toString());
             s.setString(2, user);
             s.executeUpdate();
             return 0;
