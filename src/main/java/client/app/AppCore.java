@@ -82,7 +82,7 @@ public class AppCore extends JFrame implements ActionListener {
         ImageIcon plus = new ImageIcon("./src/main/java/client/app/content/plus.png");
 
         addPass = new JButton(plus);
-//        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPass, -500, SpringLayout.HORIZONTAL_CENTER, mainPanel);
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPass, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
 //        layout.putConstraint(SpringLayout.NORTH, addPass, 625, SpringLayout.NORTH, mainPanel);
         addPass.setPreferredSize(new Dimension(250, 50));
         addPass.addActionListener(this);
@@ -107,8 +107,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        setSize(screenSize.width, screenSize.height);
-        setResizable(false);
+        setSize(screenSize.width-200, screenSize.height-200);
+        //setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -120,26 +120,20 @@ public class AppCore extends JFrame implements ActionListener {
         // set frame title to username
         setTitle("FirstLane | " + user);
 
-        for (String uuid : client.getUUIDs(user)) {
-            dmodel.addElement(uuid);
-        }
-        //remove first element
-        dmodel.remove(0);
-
+          
 
         // get data from server
         System.out.println(userData);
         data = userData.getString("data");
         salt = userData.getString("salt");
 
-        // decrypt data
-        data = client.decrypt(data, salt);
-        System.out.println(data);
+
+
 
         // password add/manage pane ******************************************************************************************/\
         pwdPanel = new JPanel();
         pwdPanel.setBackground(Color.WHITE);
-       pwdPanel.setPreferredSize(new Dimension(450, 400));
+        pwdPanel.setPreferredSize(new Dimension(450, 400));
         pwdPanel.setLayout(new BoxLayout(pwdPanel, BoxLayout.Y_AXIS));
         
         JLabel addLabel = new JLabel("Add Password");

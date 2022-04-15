@@ -9,6 +9,8 @@ import java.util.UUID;
 
 import org.json.JSONObject;
 
+import net.minidev.json.JSONArray;
+
 public class DBLink {
     private static final String url = "jdbc:mysql://localhost:3306/firstlane";
     private static final String username = "firstlane";
@@ -70,36 +72,20 @@ public class DBLink {
         return null;
     }
 
-    public int addPassword(String user, String name, String username, String password, String url, String notes) {
-
-        try (PreparedStatement s = conn
-                .prepareStatement(
-                        "INSERT INTO data (uuid, user, name, username, password, url, notes) VALUES (?, ?, ?, ?, ?, ?, ?)")) {
-            s.setString(1, UUID.randomUUID().toString());
-            s.setString(2, user);
-            s.setString(3, name);
-            s.setString(4, username);
-            s.setString(5, password);
-            s.setString(6, url);
-            s.setString(7, notes);
-            s.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        // add uuid to user data
-        try (PreparedStatement s = conn
-                .prepareStatement("UPDATE users SET data = CONCAT(data, ',' , ?) WHERE user = ?")) {
-            s.setString(1, UUID.randomUUID().toString());
+    // 0 = success
+    // 2 = error
+    public int addPassword(JSONObject json, String user) {
+      
+        //update data in users db
+        try (PreparedStatement s = conn.prepareStatement("UPDATE users SET data = ? WHERE user = ?")) {
+            s.setString(1, json.toString());
             s.setString(2, user);
             s.executeUpdate();
             return 0;
-
         } catch (Exception e) {
             e.printStackTrace();
+            return 2;
         }
-
-        return 1;
     }
 
     public String getData(String username) {
@@ -115,7 +101,14 @@ public class DBLink {
                 // rs.getString("url"), rs.getString("notes")
 
                 // json.put(rs.getString("uuid"), valueOf());
-                return rs.getString("data");
+                //if data is empty return null
+                if (rs.getString("data").equals(" ")) {
+                    return null;
+                }
+                //if data is not empty, return data
+                else {
+                    return rs.getString("data");
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,6 +143,7 @@ public class DBLink {
                 json.put("url", rs.getString("url"));
                 json.put("notes", rs.getString("notes"));
             }
+            System.out.println("json tostring" + json.toString());
             return json;
         } catch (Exception e) {
             e.printStackTrace();

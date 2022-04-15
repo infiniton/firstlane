@@ -74,17 +74,13 @@ public class APIRestController {
         System.out.println("POST Called with body: " + body);
         DBLink db = new DBLink();
         JSONObject json = new JSONObject(body);
-        String user = json.getString("user");
+        /*String user = json.getString("user");
         String name = json.getString("name");
         String username = json.getString("username");
         String password = json.getString("password");
         String url = json.getString("url");
-        String notes = json.getString("notes");
-
-        if (db.findUser(username) == 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "username not found");
-        }
-        if (db.addPassword(user, name, username, password, url, notes) != 0) {
+        String notes = json.getString("notes");*/
+        if (db.addPassword(json, user) != 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error adding password");
         }
         System.out.println(json.toString());
@@ -93,18 +89,29 @@ public class APIRestController {
 
     @GetMapping(value = "/password", produces = "application/json")
     public String getPassword(@RequestParam String uuid) {
-        System.out.println("GET Called with username: " + uuid);
-        DBLink db = new DBLink();
-        JSONArray json = new JSONArray();
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("name", "name");
-        jsonObject.put("username", "username");
-        jsonObject.put("password", "password");
-        jsonObject.put("url", "url");
-        jsonObject.put("notes", "notes");
-        json.put(jsonObject);
+        System.out.println("GET Called with uuid: " + uuid);
 
-        return json.toString();
+        // if uuid is not valid
+        if (uuid.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}")) {
 
+            DBLink db = new DBLink();
+            JSONObject json = db.getPass(uuid);
+            JSONObject jsonObject = new JSONObject();
+            try {
+                if (db.getPass(uuid) != null) {
+                    jsonObject.put("name", json.getString("name"));
+                    jsonObject.put("username", json.getString("username"));
+                    jsonObject.put("password", json.getString("password"));
+                    jsonObject.put("url", json.getString("url"));
+                    jsonObject.put("notes", json.getString("notes"));
+                }
+
+                return jsonObject.toString();
+            } catch (Exception e) {
+                System.out.print("tried to get password with uuid: " + uuid);
+                throw new ResponseStatusException(HttpStatus.NOT_FOUND, "pass not found");
+            }
+        }
+        return "";
     }
 }

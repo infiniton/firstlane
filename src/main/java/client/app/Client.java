@@ -2,6 +2,7 @@ package client.app;
 
 import java.net.*;
 import java.io.*;
+import java.util.UUID;
 
 import org.apache.catalina.User;
 import org.json.JSONObject;
@@ -16,6 +17,7 @@ public class Client {
     private String user;
     private String password;
     private String salt;
+
 
     // instantiate password encoder
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -44,7 +46,7 @@ public class Client {
         }
 
         // get response from server
-        System.out.println("Response");
+        System.out.println("Response: ");
         BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));
         String inputLine;
         StringBuffer response = new StringBuffer();
@@ -67,7 +69,6 @@ public class Client {
         req.put("password", password);
 
         String respBody = sendRequest(loginUrl, "GET", req.toString());
-        System.out.println(respBody);
         JSONObject resp = new JSONObject(respBody);
         this.salt = resp.getString("salt");
 
@@ -114,7 +115,7 @@ public class Client {
         System.out.println('\n' + "Adding password...");
         String addPassUrl = "http://localhost:8080/api/password";
 
-        System.out.println(password);
+        /*System.out.println(password);
         System.out.println(salt);
 
         JSONObject req = new JSONObject();
@@ -123,12 +124,37 @@ public class Client {
         req.put("username", AESUtils.encrypt(username, password, salt));
         req.put("password", AESUtils.encrypt(pass, password, salt));
         req.put("url", AESUtils.encrypt(url, password, salt));
-        req.put("notes", AESUtils.encrypt(notes, password, salt));
+        req.put("notes", AESUtils.encrypt(notes, password, salt));*/
 
 
-        String reqBody = req.toString();
-        System.out.println("Calling server with body: " + reqBody);
-        String respBody = sendRequest(addPassUrl, "POST", reqBody);
+        String uuid = UUID.randomUUID().toString();
+        //get current data from users db
+        String data = getUserData().getString("data");
+        System.out.println("data: " + data);
+        //read jsonobject from data and add new nested password
+        //if data is has no content, create a jsonobject
+        JSONObject json;
+
+        if (data != null) {
+            json = new JSONObject(data);
+        } else {
+            json = new JSONObject();
+        }
+
+        //json = new JSONObject();
+        JSONObject newpass = new JSONObject();
+        newpass.put("name", name);
+        newpass.put("username", username);
+        newpass.put("password", password);
+        newpass.put("url", url);
+        newpass.put("notes", notes);
+        System.out.println("newpass: " + newpass.toString());
+        json.put(uuid, newpass);
+
+
+        String jsonBody = json.toString();
+        System.out.println("Calling server with body: " + json);
+        String respBody = sendRequest(addPassUrl, "POST", jsonBody);
         System.out.println(respBody);
         JSONObject resp = new JSONObject(respBody);
 
@@ -143,30 +169,26 @@ public class Client {
         JSONObject resp = new JSONObject(respBody);
         return resp;
     }
-
-    public String[] getUUIDs(String user) throws IOException {
-        String passUrl = "http://localhost:8080/api/user?user=" + user;
-        String respBody = sendRequest(passUrl, "GET", "");
-
-        JSONObject resp = new JSONObject(respBody);
-        System.out.println("response: " + resp);
-        //get data
-        String data = resp.getString("data");
-        
-        //data formatted as uuid separated by commas
-        //JSONObject dataJson = new JSONObject(data);
-        String[] dataArray = data.split(",");
-        System.out.println("response: " + data);
-
-        return dataArray;
-
-    }
+    
 
     public JSONObject getPass(String uuid) throws IOException {
+        System.out.println("Calling getPass with uuid: " + uuid);
         String passUrl = "http://localhost:8080/api/password?uuid=" + uuid;
         String respBody = sendRequest(passUrl, "GET", "");
-        JSONObject resp = new JSONObject(respBody);
-        return resp;
+        JSONObject resp = new JSONObject(respBody.trim());
+        System.out.println("resp: " + resp.toString());
+
+        JSONObject json = new JSONObject();
+
+        //decrypt data
+        json.put("name", AESUtils.decrypt(resp.getString("name"), password, salt));
+        json.put("username", AESUtils.decrypt(resp.getString("username"), password, salt));
+        json.put("password", AESUtils.decrypt(resp.getString("password"), password, salt));
+        json.put("url", AESUtils.decrypt(resp.getString("url"), password, salt));
+        json.put("notes", AESUtils.decrypt(resp.getString("notes"), password, salt));
+
+
+        return json;
     }
 
 }
