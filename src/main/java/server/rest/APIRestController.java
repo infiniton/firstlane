@@ -19,12 +19,6 @@ public class APIRestController {
         return "pong!";
     }
 
-    // @GetMapping("/exists")
-    // public String exists(@RequestParam String username) {
-    // DBLink db = new DBLink();
-    // return db.findUser(username) == 0 ? "true" : "false";
-    // }
-
     @GetMapping("/test")
     public String test(@RequestParam String username) {
         return username;
@@ -76,11 +70,7 @@ public class APIRestController {
         String user = json.getString("user");
         //remove user from json
         json.remove("user");
-        /*String name = json.getString("name");
-        String username = json.getString("username");
-        String password = json.getString("password");
-        String url = json.getString("url");
-        String notes = json.getString("notes");*/
+
         if (db.addPassword(json, user) != 0) {
             throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "error adding password");
         }

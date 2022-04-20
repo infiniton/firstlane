@@ -60,35 +60,16 @@ public class AppCore extends JFrame implements ActionListener {
         dScrollPane.setViewportView(dList);
         dList.setLayoutOrientation(JList.VERTICAL);
 
-        /*
-         * MouseListener mouseListener = new MouseAdapter() {
-         * public void mouseClicked(MouseEvent e) {
-         * if (e.getClickCount() == 1) {
-         * String selected = dList.getSelectedValue();
-         * System.out.println(selected);
-         * 
-         * }
-         * }
-         * };
-         * dList.addMouseListener(mouseListener);
-         */
-
-        // layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, -500,
-        // SpringLayout.HORIZONTAL_CENTER, mainPanel);
-        // layout.putConstraint(SpringLayout.NORTH, dScrollPane, 10, SpringLayout.NORTH,
-        // mainPanel);
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
+        //layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
         dScrollPane.setPreferredSize(new Dimension(250, 600));
 
-        // LineBorder roundedLineBorder = new LineBorder(new Color(27, 38, 79), 1,
-        // true);
-        // dScrollPane.setBorder(roundedLineBorder);
 
         ImageIcon plus = new ImageIcon("./src/main/java/client/app/content/plus.png");
 
         addPass = new JButton(plus);
-        // layout.putConstraint(SpringLayout.NORTH, addPass, 625, SpringLayout.NORTH,
-        // mainPanel);
+        //center addpass button
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPass, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
+
         addPass.setPreferredSize(new Dimension(250, 50));
         addPass.addActionListener(this);
         // set background to transparent
@@ -98,6 +79,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         navPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(navPanel, BoxLayout.Y_AXIS);
+        //set boxlayout width to 250
+        navPanel.setPreferredSize(new Dimension(300, 800));
         navPanel.setLayout(boxLayout);
         navPanel.setBackground(Color.WHITE);
 
@@ -181,6 +164,7 @@ public class AppCore extends JFrame implements ActionListener {
                         passStr = passData.getString("password");
                         notesStr = passData.getString("notes");
                         showPasswordPanel(selected, usernameStr, urlStr, passStr, notesStr);
+                        addPanel.setVisible(true);
                         System.out.println("showpasswordpanel called");
 
                     }
@@ -221,7 +205,6 @@ public class AppCore extends JFrame implements ActionListener {
         addPanel.setBackground(Color.WHITE);
         addPanel.setPreferredSize(new Dimension(450, 400));
         addPanel.setLayout(new BoxLayout(addPanel, BoxLayout.Y_AXIS));
-
 
         JLabel addLabel = new JLabel("Add Password");
         addLabel.setFont(new Font("Arial", Font.BOLD, 20));
@@ -273,7 +256,7 @@ public class AppCore extends JFrame implements ActionListener {
         notesLabel.setForeground(new Color(27, 38, 79));
         addPanel.add(notesLabel);
 
-        JTextArea notes = new JTextArea(notesText);
+        JTextField notes = new JTextField(notesText);
         notes.setFont(new Font("Arial", Font.PLAIN, 16));
         notes.setForeground(new Color(27, 38, 79));
         addPanel.add(notes);
@@ -287,11 +270,6 @@ public class AppCore extends JFrame implements ActionListener {
         cancel.setFont(new Font("Arial", Font.PLAIN, 16));
         cancel.setForeground(new Color(27, 38, 79));
         addPanel.add(cancel);
-
-        addPanel.setVisible(true);
-
-        mainPanel.add(addPanel);
-        System.out.println("\nadd panel added");
 
         // actionlistener for save button
         save.addActionListener(l -> {
@@ -308,6 +286,12 @@ public class AppCore extends JFrame implements ActionListener {
                 e.printStackTrace();
             }
         });
+
+        addPanel.setVisible(true);
+
+        mainPanel.add(addPanel);
+        System.out.println("\nadd panel added");
+
     }
 
 }
