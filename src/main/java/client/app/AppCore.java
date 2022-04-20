@@ -1,7 +1,6 @@
 package client.app;
 
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.ListSelectionEvent;
 
@@ -13,7 +12,6 @@ import javax.imageio.ImageIO;
 import java.io.IOException;
 
 import org.json.JSONObject;
-import org.springframework.asm.Label;
 
 public class AppCore extends JFrame implements ActionListener {
 
@@ -183,6 +181,7 @@ public class AppCore extends JFrame implements ActionListener {
                         passStr = passData.getString("password");
                         notesStr = passData.getString("notes");
                         showPasswordPanel(selected, usernameStr, urlStr, passStr, notesStr);
+                        System.out.println("showpasswordpanel called");
 
                     }
 
@@ -214,11 +213,14 @@ public class AppCore extends JFrame implements ActionListener {
     public void showPasswordPanel(String nameText, String usernameText, String urlText, String passwordText,
             String notesText) {
 
+        if (addPanel != null) {
+            addPanel.setVisible(false);
+        }
+
         addPanel = new JPanel();
         addPanel.setBackground(Color.WHITE);
         addPanel.setPreferredSize(new Dimension(450, 400));
         addPanel.setLayout(new BoxLayout(addPanel, BoxLayout.Y_AXIS));
-        addPanel.setVisible(false);
 
 
         JLabel addLabel = new JLabel("Add Password");

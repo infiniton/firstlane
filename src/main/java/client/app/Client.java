@@ -2,13 +2,10 @@ package client.app;
 
 import java.net.*;
 import java.io.*;
-import java.util.UUID;
 
-import org.apache.catalina.User;
 import org.json.JSONObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.bcrypt.*;
 
 public class Client {
     private HttpURLConnection con;

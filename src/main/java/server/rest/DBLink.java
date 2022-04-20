@@ -5,11 +5,8 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.ResultSet;
-import java.util.UUID;
 
 import org.json.JSONObject;
-
-import net.minidev.json.JSONArray;
 
 public class DBLink {
     private static final String url = "jdbc:mysql://localhost:3306/firstlane";
@@ -93,15 +90,8 @@ public class DBLink {
             s.setString(1, username);
             ResultSet rs = s.executeQuery();
 
-            JSONObject json = new JSONObject();
-
             while (rs.next()) {
 
-                // rs.getString("name"), rs.getString("username"), rs.getString("password"),
-                // rs.getString("url"), rs.getString("notes")
-
-                // json.put(rs.getString("uuid"), valueOf());
-                //if data is empty return null
                 if (rs.getString("data").equals(" ")) {
                     return null;
                 }
