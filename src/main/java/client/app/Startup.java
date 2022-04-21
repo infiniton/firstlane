@@ -7,7 +7,7 @@ import javax.swing.*;
 import java.io.*;
 import javax.imageio.ImageIO;
 
-public class LoginGUI {
+public class Startup {
 
     static JFrame frame;
     

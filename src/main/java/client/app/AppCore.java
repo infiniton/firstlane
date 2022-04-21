@@ -15,11 +15,11 @@ import org.json.JSONObject;
 
 public class AppCore extends JFrame implements ActionListener {
 
-    JPanel mainPanel, addPanel, navPanel;
+    JPanel mainPanel, addPanel, navPanel, sidePanel;
 
-    JList<String> list, dList;
-    JScrollPane scrollPane, dScrollPane;
-    DefaultListModel<String> model, dmodel;
+    JList<String> list, passList;
+    JScrollPane scrollPane, passScrollPane;
+    DefaultListModel<String> model, listModel;
     JButton addPass, save;
     JTextField message, name, username, password, url, notes;
 
@@ -34,7 +34,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         passwordSelected = false;
 
-        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         SpringLayout layout = new SpringLayout();
         JFrame frame = new JFrame("FirstLane");
@@ -49,56 +49,58 @@ public class AppCore extends JFrame implements ActionListener {
         FlowLayout flowLayout = new FlowLayout();
         mainPanel.setLayout(flowLayout);
 
-        // sidebar
+        // navPanel sidebar
         // **************************************************************************************/
 
-        dmodel = new DefaultListModel<>();
-        dList = new JList<>(dmodel);
-        dList.setFixedCellHeight(50);
+        listModel = new DefaultListModel<>();
+        passList = new JList<>(listModel);
+        passList.setFixedCellHeight(50);
+        passList.setLayoutOrientation(JList.VERTICAL);
 
-        dScrollPane = new JScrollPane(dList);
-        dScrollPane.setViewportView(dList);
-        dList.setLayoutOrientation(JList.VERTICAL);
-
-        //layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, dScrollPane, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
-        dScrollPane.setPreferredSize(new Dimension(250, 600));
-
+        passScrollPane = new JScrollPane(passList);
+        passScrollPane.setViewportView(passList);
+        // create a bottom border for the scrollpane
+        passScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
 
         ImageIcon plus = new ImageIcon("./src/main/java/client/app/content/plus.png");
 
         addPass = new JButton(plus);
-        //center addpass button
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPass, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
-
-        addPass.setPreferredSize(new Dimension(250, 50));
         addPass.addActionListener(this);
-        // set background to transparent
-        addPass.setOpaque(false);
-        addPass.setContentAreaFilled(false);
         addPass.setBorderPainted(false);
 
         navPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(navPanel, BoxLayout.Y_AXIS);
-        //set boxlayout width to 250
-        navPanel.setPreferredSize(new Dimension(300, 800));
+        // set boxlayout width to 250
+        navPanel.setPreferredSize(new Dimension(275, 600));
         navPanel.setLayout(boxLayout);
         navPanel.setBackground(Color.WHITE);
+        navPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 
-        navPanel.add(new JLabel("Choose to edit an item or add a new one:"));
-        navPanel.setAlignmentX(addPass.CENTER_ALIGNMENT);
+        // navPanel.add(new JLabel("Choose to edit an item or add a new one:"));
+        addPass.setSize(new Dimension(250, 50));
+        addPass.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        navPanel.add(dScrollPane);
+        navPanel.add(passScrollPane);
         navPanel.add(addPass);
 
-        // dList.setBorder(roundedLineBorder);
         mainPanel.add(navPanel);
+        showPasswordPanel("", "", "", "", "");
+
+        sidePanel = new JPanel();
+        BoxLayout sideBoxLayout = new BoxLayout(sidePanel, BoxLayout.Y_AXIS);
+        // set boxlayout width to 275
+        sidePanel.setPreferredSize(new Dimension(275, 600));
+        sidePanel.setLayout(sideBoxLayout);
+        sidePanel.setBackground(Color.WHITE);
+        sidePanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
+        mainPanel.add(sidePanel);
 
         /**************************************************************************************/
 
         add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        setSize(screenSize.width - 200, screenSize.height - 200);
-        // setResizable(false);
+        setSize(1015, 635);
+        setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -129,14 +131,14 @@ public class AppCore extends JFrame implements ActionListener {
             // for each item in data
             for (String key : json.keySet()) {
                 // add item name to list
-                dmodel.addElement(key);
+                listModel.addElement(key);
 
             }
         }
 
         // password display panel
         // **************************************************************************************/\
-        dList.addListSelectionListener(new ListSelectionListener() {
+        passList.addListSelectionListener(new ListSelectionListener() {
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting()) {
                     System.out.println("\nclick detected");
@@ -150,14 +152,14 @@ public class AppCore extends JFrame implements ActionListener {
                     }
                     System.out.println("listener triggered");
 
-                    String selected = dList.getSelectedValue();
+                    String selected = passList.getSelectedValue();
                     System.out.println("selected: " + selected);
                     if (selected != null && !selected.equals("New Password")) {
                         // make json object from data
                         JSONObject json = new JSONObject(data);
                         // get password
                         JSONObject passData = json.getJSONObject(selected);
-                        System.out.println("calling viewpanel...");
+                        System.out.println("calling showpasswordpanel...");
                         // get password data
                         usernameStr = passData.getString("username");
                         urlStr = passData.getString("url");
@@ -166,14 +168,10 @@ public class AppCore extends JFrame implements ActionListener {
                         showPasswordPanel(selected, usernameStr, urlStr, passStr, notesStr);
                         addPanel.setVisible(true);
                         System.out.println("showpasswordpanel called");
-
                     }
-
                 }
-
             }
         });
-
     }
 
     @Override
@@ -181,17 +179,13 @@ public class AppCore extends JFrame implements ActionListener {
         if (e.getSource() == addPass) {
             System.out.println("Add button pressed");
             // open add password window
+            // add "New Password" to list
+            listModel.addElement("New Password");
+            passList.setSelectedValue("New Password", true);
             showPasswordPanel("", "", "", "", "");
             addPanel.setVisible(true);
-            // add "New Password" to list
-            dmodel.addElement("New Password");
-            dList.setSelectedValue("New Password", true);
 
         }
-    }
-
-    public boolean isPasswordSelected() {
-        return this.passwordSelected;
     }
 
     public void showPasswordPanel(String nameText, String usernameText, String urlText, String passwordText,
@@ -273,23 +267,38 @@ public class AppCore extends JFrame implements ActionListener {
 
         // actionlistener for save button
         save.addActionListener(l -> {
-            String itemName = name.getText();
-
-            dmodel.addElement(itemName);
-            // remove "New Password" from list
-            dmodel.removeElement("New Password");
-
             try {
-                System.out.println("hi");
-                client.addPass(itemName, username.getText(), password.getText(), url.getText(), notes.getText());
+                // check for changes in the fields
+                if (name.getText() != nameText || url.getText() != urlText || username.getText() != usernameText
+                        || password.getText() != passwordText || notes.getText() != notesText) {
+                    String itemName = name.getText();
+
+                    listModel.addElement(itemName);
+                    // remove "New Password" from list
+                    listModel.removeElement("New Password");
+                    client.addPass(itemName, username.getText(), password.getText(), url.getText(), notes.getText());
+
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
         });
 
+        // actionlistener for cancel button
+        cancel.addActionListener(l -> {
+            // reset text fields
+            name.setText(nameText);
+            username.setText(usernameText);
+            url.setText(urlText);
+            password.setText(passwordText);
+            notes.setText(notesText);
+
+        });
+
         addPanel.setVisible(true);
 
         mainPanel.add(addPanel);
+
         System.out.println("\nadd panel added");
 
     }
