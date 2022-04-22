@@ -2,5 +2,5 @@
 
 Java Password Manager
 
-###### An Infiniton Product
-###### https://infiniton.xyz
+###### An [Infiniton](https://infiniton.xyz) Product
+
