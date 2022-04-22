@@ -2,4 +2,4 @@
 
 Java Password Manager
 
-###### An Infiniton Project
+###### An Infiniton Product
