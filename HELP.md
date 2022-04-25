@@ -20,3 +20,19 @@ The following guides illustrate how to use some features concretely:
 * [Accessing Neo4j Data with REST](https://spring.io/guides/gs/accessing-neo4j-data-rest/)
 * [Accessing MongoDB Data with REST](https://spring.io/guides/gs/accessing-mongodb-data-rest/)
 
+### Database Setup
+Create a firstlane user and table called "users"
+
+To create the table:
+
+```sql
+CREATE TABLE `users` (
+	`user` VARCHAR(255),
+	`password` VARCHAR(255),
+	`salt` VARCHAR(255),
+	`data` LONGTEXT,
+	PRIMARY KEY (`user`)
+);
+```
+
+
