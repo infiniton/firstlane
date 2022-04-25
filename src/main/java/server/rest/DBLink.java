@@ -72,8 +72,8 @@ public class DBLink {
     // 0 = success
     // 2 = error
     public int addPassword(JSONObject json, String user) {
-      
-        //update data in users db
+
+        // update data in users db
         try (PreparedStatement s = conn.prepareStatement("UPDATE users SET data = ? WHERE user = ?")) {
             s.setString(1, json.getString("data").toString());
             s.setString(2, user);
@@ -95,7 +95,7 @@ public class DBLink {
                 if (rs.getString("data").equals(" ")) {
                     return null;
                 }
-                //if data is not empty, return data
+                // if data is not empty, return data
                 else {
                     return rs.getString("data");
                 }

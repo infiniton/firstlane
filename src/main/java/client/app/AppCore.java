@@ -31,6 +31,8 @@ public class AppCore extends JFrame implements ActionListener {
     Client client;
     boolean passwordSelected;
 
+    final Taskbar taskbar = Taskbar.getTaskbar();
+
     public AppCore(Client client) throws IOException {
         this.client = client;
 
@@ -42,6 +44,15 @@ public class AppCore extends JFrame implements ActionListener {
         JFrame frame = new JFrame("FirstLane");
 
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
+
+        try {
+            //set icon for mac os (and other systems which do support this method)
+            taskbar.setIconImage(image);
+        } catch (final UnsupportedOperationException e) {
+            System.out.println("The os does not support: 'taskbar.setIconImage'");
+        } catch (final SecurityException e) {
+            System.out.println("There was a security exception for: 'taskbar.setIconImage'");
+        }
         setIconImage(image);
 
         mainPanel = new JPanel(layout);
@@ -128,17 +139,12 @@ public class AppCore extends JFrame implements ActionListener {
 
         // parse data
         if (data != null) {
-            storedPasswords = new JSONObject();
-            // for each item in data
             for (String key : data.keySet()) {
                 // add item name to list
                 // add itemname and uuid to new json object
                 JSONObject item = data.getJSONObject(key);
                 String itemName = item.getString("name");
                 listModel.addElement(itemName);
-
-                // add item to storedPasswords
-                storedPasswords.put(key, itemName);
             }
         }
 
@@ -284,6 +290,19 @@ public class AppCore extends JFrame implements ActionListener {
                     listModel.removeElement("New Password");
                     data = client.addPass(itemName, username.getText(), password.getText(), url.getText(),
                             notes.getText());
+
+                    // remove all elements from list
+                    listModel.removeAllElements();
+
+                    if (data != null) {
+                        for (String key : data.keySet()) {
+                            // add item name to list
+                            // add itemname and uuid to new json object
+                            JSONObject item = data.getJSONObject(key);
+                            String passName = item.getString("name");
+                            listModel.addElement(passName);
+                        }
+                    }
 
                 } else {
                     System.out.println("no changes detected");

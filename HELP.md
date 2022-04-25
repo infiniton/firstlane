@@ -26,6 +26,13 @@ Create a firstlane user and table called "users"
 To create the table:
 
 ```sql
+CREATE USER 'firstlane'@'localhost' IDENTIFIED BY 'lastdash';
+GRANT ALL PRIVILEGES ON firstlane.* TO 'firstlane'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+```
+
+```sql
+
 CREATE TABLE `users` (
 	`user` VARCHAR(255),
 	`password` VARCHAR(255),

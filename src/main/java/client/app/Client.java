@@ -172,11 +172,10 @@ public class Client {
         // remove password from jsonobject
         // encrypt jsonobject and send to server
         JSONObject json = new JSONObject(data);
-        //remove password at index
+        // remove password at index
         json.remove(json.names().getString(index));
         System.out.println("json: " + json.toString());
 
-        
         JSONObject toSend = new JSONObject();
         toSend.put("data", AESUtils.encrypt(json.toString(), password, salt));
         toSend.put("user", user);

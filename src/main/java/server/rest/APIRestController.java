@@ -68,7 +68,7 @@ public class APIRestController {
         DBLink db = new DBLink();
         JSONObject json = new JSONObject(body);
         String user = json.getString("user");
-        //remove user from json
+        // remove user from json
         json.remove("user");
 
         if (db.addPassword(json, user) != 0) {
