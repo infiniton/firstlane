@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
+import java.util.UUID;
 
 import org.json.JSONObject;
 
@@ -22,10 +23,11 @@ public class AppCore extends JFrame implements ActionListener {
     DefaultListModel<String> model, listModel;
     JButton addPass, save;
     JTextField message, name, username, password, url, notes;
+    JSONObject storedPasswords, data;
 
-    int maxSize;
+    int maxSize, selectedIndex;
     BufferedImage image;
-    String user, data, salt, usernameStr, urlStr, passStr, notesStr;
+    String user, salt, nameStr, usernameStr, urlStr, passStr, notesStr, selectedUUID;
     Client client;
     boolean passwordSelected;
 
@@ -86,20 +88,22 @@ public class AppCore extends JFrame implements ActionListener {
         mainPanel.add(navPanel);
         showPasswordPanel("", "", "", "", "");
 
-        sidePanel = new JPanel();
-        BoxLayout sideBoxLayout = new BoxLayout(sidePanel, BoxLayout.Y_AXIS);
-        // set boxlayout width to 275
-        sidePanel.setPreferredSize(new Dimension(275, 600));
-        sidePanel.setLayout(sideBoxLayout);
-        sidePanel.setBackground(Color.WHITE);
-        sidePanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
-        mainPanel.add(sidePanel);
+        /*
+         * sidePanel = new JPanel();
+         * BoxLayout sideBoxLayout = new BoxLayout(sidePanel, BoxLayout.Y_AXIS);
+         * // set boxlayout width to 275
+         * sidePanel.setPreferredSize(new Dimension(275, 600));
+         * sidePanel.setLayout(sideBoxLayout);
+         * sidePanel.setBackground(Color.WHITE);
+         * sidePanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
+         * mainPanel.add(sidePanel);
+         */
 
         /**************************************************************************************/
 
         add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        setSize(1015, 635);
+        setSize(740, 635);
         setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -116,10 +120,7 @@ public class AppCore extends JFrame implements ActionListener {
         System.out.println(userData);
         try {
             salt = userData.getString("salt");
-            data = userData.getString("data");
-
-            // decrypt data
-            data = client.decrypt(data, salt);
+            data = new JSONObject(client.decrypt(userData.getString("data"), salt));
             System.out.println("\ndecrypted data: " + data);
         } catch (Exception e) {
             System.out.println("Error: " + e);
@@ -127,12 +128,17 @@ public class AppCore extends JFrame implements ActionListener {
 
         // parse data
         if (data != null) {
-            JSONObject json = new JSONObject(data);
+            storedPasswords = new JSONObject();
             // for each item in data
-            for (String key : json.keySet()) {
+            for (String key : data.keySet()) {
                 // add item name to list
-                listModel.addElement(key);
+                // add itemname and uuid to new json object
+                JSONObject item = data.getJSONObject(key);
+                String itemName = item.getString("name");
+                listModel.addElement(itemName);
 
+                // add item to storedPasswords
+                storedPasswords.put(key, itemName);
             }
         }
 
@@ -142,33 +148,22 @@ public class AppCore extends JFrame implements ActionListener {
             public void valueChanged(ListSelectionEvent e) {
                 if (e.getValueIsAdjusting()) {
                     System.out.println("\nclick detected");
-                    try {
-                        JSONObject userData = client.getUserData();
-                        salt = userData.getString("salt");
-                        data = userData.getString("data");
-                        data = client.decrypt(data, salt);
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
-                    }
-                    System.out.println("listener triggered");
 
-                    String selected = passList.getSelectedValue();
-                    System.out.println("selected: " + selected);
-                    if (selected != null && !selected.equals("New Password")) {
-                        // make json object from data
-                        JSONObject json = new JSONObject(data);
-                        // get password
-                        JSONObject passData = json.getJSONObject(selected);
-                        System.out.println("calling showpasswordpanel...");
-                        // get password data
-                        usernameStr = passData.getString("username");
-                        urlStr = passData.getString("url");
-                        passStr = passData.getString("password");
-                        notesStr = passData.getString("notes");
-                        showPasswordPanel(selected, usernameStr, urlStr, passStr, notesStr);
-                        addPanel.setVisible(true);
-                        System.out.println("showpasswordpanel called");
-                    }
+                    selectedIndex = passList.getSelectedIndex();
+                    // get password from data at selected index
+                    JSONObject passData = data.getJSONObject(data.keySet().toArray()[selectedIndex].toString());
+
+                    System.out.println("calling showpasswordpanel...");
+                    // get password data
+                    nameStr = passData.getString("name");
+                    usernameStr = passData.getString("username");
+                    urlStr = passData.getString("url");
+                    passStr = passData.getString("password");
+                    notesStr = passData.getString("notes");
+                    showPasswordPanel(nameStr, usernameStr, urlStr, passStr, notesStr);
+                    addPanel.setVisible(true);
+                    System.out.println("showpasswordpanel called");
+
                 }
             }
         });
@@ -260,6 +255,11 @@ public class AppCore extends JFrame implements ActionListener {
         save.setForeground(new Color(27, 38, 79));
         addPanel.add(save);
 
+        JButton delete = new JButton("Delete");
+        delete.setFont(new Font("Arial", Font.PLAIN, 16));
+        delete.setForeground(new Color(27, 38, 79));
+        addPanel.add(delete);
+
         JButton cancel = new JButton("Cancel");
         cancel.setFont(new Font("Arial", Font.PLAIN, 16));
         cancel.setForeground(new Color(27, 38, 79));
@@ -269,16 +269,48 @@ public class AppCore extends JFrame implements ActionListener {
         save.addActionListener(l -> {
             try {
                 // check for changes in the fields
-                if (name.getText() != nameText || url.getText() != urlText || username.getText() != usernameText
+                if (name.getText().equals(nameText) || url.getText() != urlText || username.getText() != usernameText
                         || password.getText() != passwordText || notes.getText() != notesText) {
-                    String itemName = name.getText();
+                    System.out.println("changes detected");
+                    String itemName = name.getText()/* + UUID.randomUUID().toString() */;
+                    System.out.println(name.getText() + " should equal " + nameText);
+                    System.out.println(url.getText() + " should equal " + urlText);
+                    System.out.println(username.getText() + " should equal " + usernameText);
+                    System.out.println(password.getText() + " should equal " + passwordText);
+                    System.out.println(notes.getText() + " should equal " + notesText);
 
                     listModel.addElement(itemName);
                     // remove "New Password" from list
                     listModel.removeElement("New Password");
-                    client.addPass(itemName, username.getText(), password.getText(), url.getText(), notes.getText());
+                    data = client.addPass(itemName, username.getText(), password.getText(), url.getText(),
+                            notes.getText());
 
+                } else {
+                    System.out.println("no changes detected");
                 }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+
+        // actionlistener for delete button
+        delete.addActionListener(l -> {
+            try {
+                selectedIndex = passList.getSelectedIndex();
+                System.out.println("delete button pressed");
+                // yes or no dialog
+                int dialogResult = JOptionPane.showConfirmDialog(null,
+                        "You are about to delete this password. Do you wish to proceed?", "FirstLane",
+                        JOptionPane.YES_NO_OPTION);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    System.out.println("yes");
+                    // delete password
+                    data = client.deletePass(selectedIndex);
+                    // remove from list
+                    listModel.removeElement(nameText);
+                    showPasswordPanel("", "", "", "", "");
+                }
+
             } catch (Exception e) {
                 e.printStackTrace();
             }

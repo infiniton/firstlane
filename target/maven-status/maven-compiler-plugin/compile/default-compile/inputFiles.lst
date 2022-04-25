@@ -1,9 +1,8 @@
 /Users/alec/Documents/Git/firstlane/src/main/java/server/rest/APIRestController.java
 /Users/alec/Documents/Git/firstlane/src/main/java/client/app/Login.java
-/Users/alec/Documents/Git/firstlane/src/main/java/client/app/testing.java
 /Users/alec/Documents/Git/firstlane/src/main/java/client/app/AppCore.java
 /Users/alec/Documents/Git/firstlane/src/main/java/client/app/Register.java
-/Users/alec/Documents/Git/firstlane/src/main/java/client/app/LoginGUI.java
+/Users/alec/Documents/Git/firstlane/src/main/java/client/app/Startup.java
 /Users/alec/Documents/Git/firstlane/src/main/java/client/app/PasswordUtils.java
 /Users/alec/Documents/Git/firstlane/src/main/java/server/rest/DBLink.java
 /Users/alec/Documents/Git/firstlane/src/main/java/server/rest/RestServiceApplication.java

@@ -1,6 +1,7 @@
 package client.app;
 
 import java.net.*;
+import java.util.UUID;
 import java.io.*;
 
 import org.json.JSONObject;
@@ -13,6 +14,7 @@ public class Client {
     private String user;
     private String password;
     private String salt;
+    private final String REQUEST_URL = "fl.infiniton.xyz";
 
     // instantiate password encoder
     private PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -57,7 +59,7 @@ public class Client {
         System.out.println('\n' + "Logging in...");
         this.user = user;
         this.password = password;
-        String loginUrl = "http://localhost:8080/api/user?user=" + user;
+        String loginUrl = "http://" + REQUEST_URL + "/api/user?user=" + user;
 
         JSONObject req = new JSONObject();
         req.put("user", user);
@@ -81,7 +83,7 @@ public class Client {
     public int register(String user, String password) throws IOException {
         System.out.println('\n' + "Logging in...");
         this.user = user;
-        URL registerUrl = new URL("http://localhost:8080/api/user");
+        URL registerUrl = new URL("http://" + REQUEST_URL + "/api/user");
 
         JSONObject req = new JSONObject();
         req.put("user", user);
@@ -106,9 +108,9 @@ public class Client {
         return AESUtils.decrypt(strToDecrypt, password, salt);
     }
 
-    public int addPass(String name, String username, String pass, String url, String notes) throws IOException {
+    public JSONObject addPass(String name, String username, String pass, String url, String notes) throws IOException {
         System.out.println('\n' + "Adding password...");
-        String addPassUrl = "http://localhost:8080/api/password";
+        String addPassUrl = "http://" + REQUEST_URL + "/api/password";
         String data;
 
         // get current data from users db
@@ -133,17 +135,18 @@ public class Client {
 
         // json = new JSONObject();
         JSONObject newpass = new JSONObject();
+        String uuid = UUID.randomUUID().toString();
+        newpass.put("name", name);
         newpass.put("username", username);
         newpass.put("password", pass);
         newpass.put("url", url);
         newpass.put("notes", notes);
         System.out.println("newpass: " + newpass.toString());
-        json.put(name, newpass);
+        json.put(uuid, newpass);
         System.out.println("json: " + json.toString());
         JSONObject toSend = new JSONObject();
         toSend.put("data", AESUtils.encrypt(json.toString(), password, salt));
         toSend.put("user", user);
-
         String toSendBody = toSend.toString();
         System.out.println("Calling server with body: " + toSend);
         String respBody = sendRequest(addPassUrl, "POST", toSendBody);
@@ -152,11 +155,41 @@ public class Client {
 
         System.out.println("Password added");
 
-        return 0;
+        return json;
+    }
+
+    public JSONObject deletePass(int index) throws IOException {
+        System.out.println('\n' + "Deleting password...");
+        String deletePassUrl = "http://" + REQUEST_URL + "/api/password";
+        String data;
+
+        // get current data from users db
+        try {
+            data = AESUtils.decrypt(getUserData().getString("data"), password, salt);
+        } catch (Exception e) {
+            data = null;
+        }
+        // remove password from jsonobject
+        // encrypt jsonobject and send to server
+        JSONObject json = new JSONObject(data);
+        //remove password at index
+        json.remove(json.names().getString(index));
+        System.out.println("json: " + json.toString());
+
+        
+        JSONObject toSend = new JSONObject();
+        toSend.put("data", AESUtils.encrypt(json.toString(), password, salt));
+        toSend.put("user", user);
+        String toSendBody = toSend.toString();
+        System.out.println("Calling server with body: " + toSend);
+        String respBody = sendRequest(deletePassUrl, "POST", toSendBody);
+        System.out.println(respBody);
+
+        return json;
     }
 
     public JSONObject getUserData() throws IOException {
-        String userUrl = "http://localhost:8080/api/user?user=" + user;
+        String userUrl = "http://" + REQUEST_URL + "/api/user?user=" + user;
         String respBody = sendRequest(userUrl, "GET", "");
         JSONObject resp = new JSONObject(respBody);
         return resp;
@@ -164,7 +197,7 @@ public class Client {
 
     public JSONObject getPass(String uuid) throws IOException {
         System.out.println("Calling getPass with uuid: " + uuid);
-        String passUrl = "http://localhost:8080/api/password?uuid=" + uuid;
+        String passUrl = "http://" + REQUEST_URL + "/api/password?uuid=" + uuid;
         String respBody = sendRequest(passUrl, "GET", "");
         JSONObject resp = new JSONObject(respBody.trim());
         System.out.println("resp: " + resp.toString());
