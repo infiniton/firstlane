@@ -46,7 +46,7 @@ public class AppCore extends JFrame implements ActionListener {
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
 
         try {
-            //set icon for mac os (and other systems which do support this method)
+            // set icon for mac os (and other systems which do support this method)
             taskbar.setIconImage(image);
         } catch (final UnsupportedOperationException e) {
             System.out.println("The os does not support: 'taskbar.setIconImage'");
@@ -144,7 +144,8 @@ public class AppCore extends JFrame implements ActionListener {
                 // add itemname and uuid to new json object
                 JSONObject item = data.getJSONObject(key);
                 String itemName = item.getString("name");
-                listModel.addElement(itemName);
+                String itemURL = item.getString("url");
+                listModel.addElement(itemName + " | " + itemURL);
             }
         }
 
@@ -300,7 +301,8 @@ public class AppCore extends JFrame implements ActionListener {
                             // add itemname and uuid to new json object
                             JSONObject item = data.getJSONObject(key);
                             String passName = item.getString("name");
-                            listModel.addElement(passName);
+                            String itemURL = item.getString("url");
+                            listModel.addElement(passName + " | " + itemURL);
                         }
                     }
 

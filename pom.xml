@@ -11,6 +11,7 @@
 	<groupId>server</groupId>
 	<artifactId>server</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>rest</name>
 	<description>REST API for firstlane pw mgr</description>
 	<properties>
