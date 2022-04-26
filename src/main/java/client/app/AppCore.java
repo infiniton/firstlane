@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.util.UUID;
 
 import org.json.JSONObject;
 

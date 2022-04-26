@@ -98,6 +98,7 @@ public class Client {
         JSONObject resp = new JSONObject(respBody);
 
         System.out.println("Registration successful");
+        System.out.println("registration response: " + resp.toString());
 
         return 0;
     }
@@ -151,7 +152,7 @@ public class Client {
         System.out.println("Calling server with body: " + toSend);
         String respBody = sendRequest(addPassUrl, "POST", toSendBody);
         System.out.println(respBody);
-        JSONObject resp = new JSONObject(respBody);
+        //JSONObject resp = new JSONObject(respBody);
 
         System.out.println("Password added");
 
