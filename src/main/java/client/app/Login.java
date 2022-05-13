@@ -32,7 +32,6 @@ public class Login extends JFrame implements ActionListener, KeyListener {
         frame.setContentPane(panel);
         panel.setBackground(Color.WHITE);
 
-        // set frame title to username
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
         setIconImage(image);
 

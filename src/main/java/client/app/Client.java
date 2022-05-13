@@ -8,6 +8,8 @@ import org.json.JSONObject;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.util.*;
+
 public class Client {
     private HttpURLConnection con;
 
@@ -142,16 +144,16 @@ public class Client {
         newpass.put("password", pass);
         newpass.put("url", url);
         newpass.put("notes", notes);
+        newpass.put("uuid", uuid);
         System.out.println("newpass: " + newpass.toString());
         json.put(uuid, newpass);
-        System.out.println("json: " + json.toString());
+
         JSONObject toSend = new JSONObject();
         toSend.put("data", AESUtils.encrypt(json.toString(), password, salt));
         toSend.put("user", user);
         String toSendBody = toSend.toString();
         System.out.println("Calling server with body: " + toSend);
         String respBody = sendRequest(addPassUrl, "POST", toSendBody);
-        System.out.println(respBody);
         //JSONObject resp = new JSONObject(respBody);
 
         System.out.println("Password added");
@@ -193,6 +195,20 @@ public class Client {
         String respBody = sendRequest(userUrl, "GET", "");
         JSONObject resp = new JSONObject(respBody);
         return resp;
+    }
+
+    public String getUsername() {
+        return user;
+    }
+
+    public void logout() {
+        //close appcore and open new login screen
+        System.out.println("Logging out....................................................................................");
+        this.user = null;
+        this.password = null;
+        this.salt = null;
+
+        System.exit(0);
     }
 
     public JSONObject getPass(String uuid) throws IOException {

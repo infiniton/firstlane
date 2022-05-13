@@ -9,18 +9,23 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
+import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
+
 import java.io.IOException;
+
+import java.util.TreeMap;
+import java.util.SortedMap;
 
 import org.json.JSONObject;
 
 public class AppCore extends JFrame implements ActionListener {
 
-    JPanel mainPanel, addPanel, navPanel, sidePanel;
+    JPanel mainPanel, addPanel, navPanel, sidePanel, gapPanel;
 
     JList<String> list, passList;
     JScrollPane scrollPane, passScrollPane;
     DefaultListModel<String> model, listModel;
-    JButton addPass, save;
+    JButton addPass, save, logout;
     JTextField message, name, username, password, url, notes;
     JSONObject storedPasswords, data;
 
@@ -28,7 +33,11 @@ public class AppCore extends JFrame implements ActionListener {
     BufferedImage image;
     String user, salt, nameStr, usernameStr, urlStr, passStr, notesStr, selectedUUID;
     Client client;
-    boolean passwordSelected;
+    boolean passwordSelected, isDark;
+    SortedMap<String, String> passwords;
+    SpringLayout layout;
+    GridBagConstraints c;
+    Color fontColor, addPanelBg;
 
     final Taskbar taskbar = Taskbar.getTaskbar();
 
@@ -39,7 +48,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
-        SpringLayout layout = new SpringLayout();
+        layout = new SpringLayout();
         JFrame frame = new JFrame("FirstLane");
 
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
@@ -58,8 +67,8 @@ public class AppCore extends JFrame implements ActionListener {
         frame.setContentPane(mainPanel);
         mainPanel.setBackground(Color.WHITE);
 
-        FlowLayout flowLayout = new FlowLayout();
-        mainPanel.setLayout(flowLayout);
+        mainPanel.setLayout(new GridBagLayout());
+        c = new GridBagConstraints();
 
         // navPanel sidebar
         // **************************************************************************************/
@@ -71,6 +80,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         passScrollPane = new JScrollPane(passList);
         passScrollPane.setViewportView(passList);
+        passScrollPane.setBackground(Color.white);
         // create a bottom border for the scrollpane
         passScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
 
@@ -80,10 +90,14 @@ public class AppCore extends JFrame implements ActionListener {
         addPass.addActionListener(this);
         addPass.setBorderPainted(false);
 
+        /*gapPanel = new JPanel();
+        gapPanel.setPreferredSize(new Dimension(10, 600));
+        gapPanel.setBackground(Color.WHITE);*/
+
         navPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(navPanel, BoxLayout.Y_AXIS);
         // set boxlayout width to 250
-        navPanel.setPreferredSize(new Dimension(275, 600));
+        navPanel.setPreferredSize(new Dimension(275, 400));
         navPanel.setLayout(boxLayout);
         navPanel.setBackground(Color.WHITE);
         navPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
@@ -92,28 +106,107 @@ public class AppCore extends JFrame implements ActionListener {
         addPass.setSize(new Dimension(250, 50));
         addPass.setAlignmentX(JComponent.CENTER_ALIGNMENT);
 
-        navPanel.add(passScrollPane);
+        navPanel.add(passScrollPane, BorderLayout.CENTER);
         navPanel.add(addPass);
 
-        mainPanel.add(navPanel);
-        showPasswordPanel("", "", "", "", "");
+        // sidePanel
+        sidePanel = new JPanel();
+        sidePanel.setPreferredSize(new Dimension(75, 400));
+        sidePanel.setLayout(new GridBagLayout());
+        sidePanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
+        sidePanel.setBackground(Color.WHITE);
 
-        /*
-         * sidePanel = new JPanel();
-         * BoxLayout sideBoxLayout = new BoxLayout(sidePanel, BoxLayout.Y_AXIS);
-         * // set boxlayout width to 275
-         * sidePanel.setPreferredSize(new Dimension(275, 600));
-         * sidePanel.setLayout(sideBoxLayout);
-         * sidePanel.setBackground(Color.WHITE);
-         * sidePanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
-         * mainPanel.add(sidePanel);
-         */
+        // add button to sidePanel
+        JButton settings = new JButton();
+        settings.setIcon(new ImageIcon("./src/main/java/client/app/content/settings-50px-background.png"));
+        settings.setBorderPainted(false);
+        c.gridx = 0;
+        c.gridy = 0;
+        // add top padding
+        c.insets = new Insets(0, 0, 0, 0);
+        sidePanel.add(settings, c);
+
+        //add button to sidePanel
+        JButton darkMode = new JButton();
+        darkMode.setIcon(new ImageIcon("./src/main/java/client/app/content/darkMode-50px.png"));
+        darkMode.setBorderPainted(false);
+        c.gridx = 0;
+        c.gridy = 1;
+        // add top padding
+        c.insets = new Insets(30, 0, 0, 0);
+        sidePanel.add(darkMode, c);
+
+
+        // add button to sidePanel
+        logout = new JButton();
+        logout.setIcon(new ImageIcon("./src/main/java/client/app/content/darkLock-closed-50px.png"));
+        logout.setBorderPainted(false);
+        c.gridx = 0;
+        c.gridy = 2;
+        // add top padding
+        c.anchor = GridBagConstraints.PAGE_END;
+        c.weighty = 10;
+        c.insets = new Insets(0, 0, 0, 0);
+
+        sidePanel.add(logout, c);
+
+        logout.addActionListener(this);
+        isDark = false;
+        darkMode.addActionListener(l -> {
+            if (!isDark) {
+                navPanel.setBackground(new Color(32, 34, 37));
+                sidePanel.setBackground(new Color(32, 34, 37));
+                mainPanel.setBackground(new Color(56, 57, 62));
+                passScrollPane.getViewport().setBackground(new Color(47, 49, 54));
+                fontColor = new Color(255, 255, 255);
+                addPanelBg = new Color(56, 57, 62);
+                settings.setIcon(new ImageIcon("src/main/java/client/app/content/settings-50px-background-inverse.png"));
+                darkMode.setIcon(new ImageIcon("src/main/java/client/app/content/darkMode-50px-inverse.png"));
+                logout.setIcon(new ImageIcon("src/main/java/client/app/content/darkLock-closed-50px-inverse.png"));
+                showPasswordPanel("", "", "", "", "");
+                isDark = true;
+            } else {
+                navPanel.setBackground(Color.WHITE);
+                sidePanel.setBackground(Color.WHITE);
+                mainPanel.setBackground(Color.WHITE);
+                passScrollPane.setBackground(Color.WHITE);
+                fontColor = new Color(0, 0, 0);
+                addPanelBg = new Color(255, 255, 255);
+                settings.setIcon(new ImageIcon("src/main/java/client/app/content/settings-50px-background.png"));
+                darkMode.setIcon(new ImageIcon("src/main/java/client/app/content/darkMode-50px.png"));
+                logout.setIcon(new ImageIcon("src/main/java/client/app/content/darkLock-closed-50px.png"));
+                showPasswordPanel("", "", "", "", "");
+                isDark = false;
+            }
+        });
+
+        c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+
+        mainPanel.add(navPanel, c);
+
+        //mainPanel.add(navPanel);
+        showPasswordPanel("", "", "", "", "");
+        // put sidePanel on the right side of the mainPanel
+        layout.putConstraint(SpringLayout.EAST, sidePanel, 0, SpringLayout.EAST, mainPanel);
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPanel, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
+
+        // contraints for sidepanel to keep it on the right side of the mainPanel
+        c.gridx = 6;
+        c.gridy = 0;
+        c.gridheight = 1;
+        c.gridwidth = 1;
+
+        mainPanel.add(sidePanel, c);
 
         /**************************************************************************************/
 
         add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        setSize(740, 635);
+        setSize(770, 430);
         setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -139,12 +232,15 @@ public class AppCore extends JFrame implements ActionListener {
         // parse data
         if (data != null) {
             for (String key : data.keySet()) {
+
                 // add item name to list
                 // add itemname and uuid to new json object
                 JSONObject item = data.getJSONObject(key);
                 String itemName = item.getString("name");
                 String itemURL = item.getString("url");
-                listModel.addElement(itemName + " | " + itemURL);
+                // add to list alphabetically
+                listModel.addElement("  " + itemName + " | " + itemURL);
+
             }
         }
 
@@ -181,11 +277,16 @@ public class AppCore extends JFrame implements ActionListener {
             System.out.println("Add button pressed");
             // open add password window
             // add "New Password" to list
-            listModel.addElement("New Password");
-            passList.setSelectedValue("New Password", true);
+            listModel.addElement("  New Password");
+            passList.setSelectedValue("  New Password", true);
             showPasswordPanel("", "", "", "", "");
             addPanel.setVisible(true);
 
+        }
+        else if (e.getSource() == logout) {
+            System.out.println("Logout button pressed");
+            // logout
+            client.logout();
         }
     }
 
@@ -196,80 +297,191 @@ public class AppCore extends JFrame implements ActionListener {
             addPanel.setVisible(false);
         }
 
+        int leftPadding = 10;
+        int textWidth = 30;
+        int gridWidth = 3;
+
         addPanel = new JPanel();
-        addPanel.setBackground(Color.WHITE);
-        addPanel.setPreferredSize(new Dimension(450, 400));
-        addPanel.setLayout(new BoxLayout(addPanel, BoxLayout.Y_AXIS));
+        addPanel.setBackground(addPanelBg);
+        addPanel.setPreferredSize(new Dimension(410, 400));
+        addPanel.setLayout(new GridBagLayout());
+        c = new GridBagConstraints();
 
         JLabel addLabel = new JLabel("Add Password");
         addLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        addLabel.setForeground(new Color(27, 38, 79));
-        addPanel.add(addLabel);
+        addLabel.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 0;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+        addPanel.add(addLabel, c);
 
         JLabel nameLabel = new JLabel("Name");
         nameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        nameLabel.setForeground(new Color(27, 38, 79));
-        addPanel.add(nameLabel);
+        nameLabel.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 1;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
 
-        JTextField name = new JTextField(nameText);
+        addPanel.add(nameLabel, c);
+
+        JTextField name = new JTextField(nameText, textWidth);
         name.setFont(new Font("Arial", Font.PLAIN, 16));
-        name.setForeground(new Color(27, 38, 79));
-        addPanel.add(name);
+        name.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 2;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(name, c);
 
         JLabel urlLabel = new JLabel("URL");
         urlLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        urlLabel.setForeground(new Color(27, 38, 79));
-        addPanel.add(urlLabel);
+        urlLabel.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 3;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
 
-        JTextField url = new JTextField(urlText);
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(urlLabel, c);
+
+        JTextField url = new JTextField(urlText, textWidth);
         url.setFont(new Font("Arial", Font.PLAIN, 16));
-        url.setForeground(new Color(27, 38, 79));
-        addPanel.add(url);
+        url.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 4;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
+
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(url, c);
 
         JLabel usernameLabel = new JLabel("Username");
         usernameLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        usernameLabel.setForeground(new Color(27, 38, 79));
-        addPanel.add(usernameLabel);
+        usernameLabel.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 5;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
 
-        JTextField username = new JTextField(usernameText);
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(usernameLabel, c);
+
+        JTextField username = new JTextField(usernameText, textWidth);
         username.setFont(new Font("Arial", Font.PLAIN, 16));
-        username.setForeground(new Color(27, 38, 79));
-        addPanel.add(username);
+        username.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 6;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
+
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(username, c);
 
         JLabel passwordLabel = new JLabel("Password");
         passwordLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        passwordLabel.setForeground(new Color(27, 38, 79));
-        addPanel.add(passwordLabel);
+        passwordLabel.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 7;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
 
-        JTextField password = new JTextField(passwordText);
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(passwordLabel, c);
+
+        JTextField password = new JTextField(passwordText, textWidth);
         password.setFont(new Font("Arial", Font.PLAIN, 16));
-        password.setForeground(new Color(27, 38, 79));
-        addPanel.add(password);
+        password.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 8;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
+
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(password, c);
 
         JLabel notesLabel = new JLabel("Notes");
         notesLabel.setFont(new Font("Arial", Font.PLAIN, 16));
-        notesLabel.setForeground(new Color(27, 38, 79));
-        addPanel.add(notesLabel);
+        notesLabel.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 9;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
 
-        JTextField notes = new JTextField(notesText);
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(notesLabel, c);
+
+        JTextField notes = new JTextField(notesText, textWidth);
         notes.setFont(new Font("Arial", Font.PLAIN, 16));
-        notes.setForeground(new Color(27, 38, 79));
-        addPanel.add(notes);
+        notes.setForeground(fontColor);
+        c.gridx = 0;
+        c.gridy = 10;
+        c.weightx = 1;
+        c.gridwidth = gridWidth;
+
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(notes, c);
 
         JButton save = new JButton("Save");
         save.setFont(new Font("Arial", Font.PLAIN, 16));
         save.setForeground(new Color(27, 38, 79));
-        addPanel.add(save);
+        c.gridx = 0;
+        c.gridy = 11;
+        c.weightx = 1;
+        c.gridwidth = 1;
+
+        c.anchor = GridBagConstraints.WEST;
+        c.insets = new Insets(0, leftPadding, 0, 0);
+
+        addPanel.add(save, c);
 
         JButton delete = new JButton("Delete");
         delete.setFont(new Font("Arial", Font.PLAIN, 16));
         delete.setForeground(new Color(27, 38, 79));
-        addPanel.add(delete);
+        c.gridx = 1;
+        c.gridy = 11;
+        c.weightx = 0.67;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.WEST;
+        //c.insets = new Insets(0, leftPadding+50, 0, 0);
+
+        addPanel.add(delete, c);
 
         JButton cancel = new JButton("Cancel");
         cancel.setFont(new Font("Arial", Font.PLAIN, 16));
         cancel.setForeground(new Color(27, 38, 79));
-        addPanel.add(cancel);
+        c.gridx = 2;
+        c.gridy = 11;
+        c.weightx = 0.33;
+        c.gridwidth = 1;
+        c.anchor = GridBagConstraints.WEST;
+        //c.insets = new Insets(0, leftPadding+100, 0, 0);
+
+        addPanel.add(cancel, c);
 
         // actionlistener for save button
         save.addActionListener(l -> {
@@ -301,7 +513,7 @@ public class AppCore extends JFrame implements ActionListener {
                             JSONObject item = data.getJSONObject(key);
                             String passName = item.getString("name");
                             String itemURL = item.getString("url");
-                            listModel.addElement(passName + " | " + itemURL);
+                            listModel.addElement("  " + passName + " | " + itemURL);
                         }
                     }
 
@@ -327,7 +539,7 @@ public class AppCore extends JFrame implements ActionListener {
                     // delete password
                     data = client.deletePass(selectedIndex);
                     // remove from list
-                    listModel.removeElement(nameText);
+                    listModel.removeElement("  " + nameText + " | " + urlText);
                     showPasswordPanel("", "", "", "", "");
                 }
 
@@ -349,7 +561,15 @@ public class AppCore extends JFrame implements ActionListener {
 
         addPanel.setVisible(true);
 
-        mainPanel.add(addPanel);
+        // grid layout constraints to keep it centered
+        GridBagConstraints c = new GridBagConstraints();
+        c.fill = GridBagConstraints.HORIZONTAL;
+        c.gridx = 3;
+        c.gridy = 0;
+        c.gridwidth = 2;
+        c.gridheight = 1;
+
+        mainPanel.add(addPanel, c);
 
         System.out.println("\nadd panel added");
 
