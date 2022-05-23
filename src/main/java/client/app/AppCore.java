@@ -37,6 +37,14 @@ public class AppCore extends JFrame implements ActionListener {
     final Taskbar taskbar = Taskbar.getTaskbar();
 
     public AppCore(Client client) throws IOException {
+
+        UIManager.LookAndFeelInfo looks[] = UIManager.getInstalledLookAndFeels();
+        try {
+            // 0-Swing, 1-Mac, 2-?, 3-Windows, 4-Old Windows
+            UIManager.setLookAndFeel(looks[3].getClassName());
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
         this.client = client;
 
         passwordSelected = false;
@@ -75,6 +83,7 @@ public class AppCore extends JFrame implements ActionListener {
         passScrollPane = new JScrollPane(passList);
         passScrollPane.setViewportView(passList);
         passScrollPane.setBackground(Color.white);
+        passScrollPane.setMinimumSize(new Dimension(200, 300));
         // create a bottom border for the scrollpane
         passScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
 
@@ -108,7 +117,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         // add button to sidePanel
         JButton settings = new JButton();
-        settings.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
+        settings.setIcon(new ImageIcon(
+                ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
 
         settings.setBorderPainted(false);
         c = new GridBagConstraints();
@@ -120,7 +130,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         // add button to sidePanel
         JButton darkMode = new JButton();
-        darkMode.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
+        darkMode.setIcon(
+                new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
         darkMode.setBorderPainted(false);
         c = new GridBagConstraints();
 
@@ -132,7 +143,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         // add button to sidePanel
         logout = new JButton();
-        logout.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));
+        logout.setIcon(
+                new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));
         logout.setBorderPainted(false);
         c = new GridBagConstraints();
 
@@ -156,11 +168,15 @@ public class AppCore extends JFrame implements ActionListener {
                 passList.setForeground(Color.WHITE);
                 fontColor = new Color(255, 255, 255);
                 addPanelBg = new Color(56, 57, 62);
-                
+
                 try {
-                    settings.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background-inverse.png"))));
-                    darkMode.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px-inverse.png"))));
-                    logout.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px-inverse.png"))));;
+                    settings.setIcon(new ImageIcon(ImageIO.read(
+                            Startup.class.getResource("/client/app/content/settings-50px-background-inverse.png"))));
+                    darkMode.setIcon(new ImageIcon(
+                            ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px-inverse.png"))));
+                    logout.setIcon(new ImageIcon(ImageIO
+                            .read(Startup.class.getResource("/client/app/content/darkLock-closed-50px-inverse.png"))));
+                    ;
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -176,9 +192,13 @@ public class AppCore extends JFrame implements ActionListener {
                 fontColor = new Color(0, 0, 0);
                 addPanelBg = new Color(255, 255, 255);
                 try {
-                    settings.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
-                    darkMode.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
-                    logout.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));;
+                    settings.setIcon(new ImageIcon(ImageIO
+                            .read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
+                    darkMode.setIcon(new ImageIcon(
+                            ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
+                    logout.setIcon(new ImageIcon(
+                            ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));
+                    ;
                 } catch (IOException e) {
                     e.printStackTrace();
 
@@ -354,6 +374,7 @@ public class AppCore extends JFrame implements ActionListener {
         name.setFont(new Font("Arial", Font.PLAIN, 16));
         name.setForeground(fontColor);
         name.setBackground(color);
+        name.setMinimumSize(new Dimension(10*textWidth, 24));
         c.gridx = 0;
         c.gridy = 2;
         c.weightx = 1;
@@ -380,6 +401,8 @@ public class AppCore extends JFrame implements ActionListener {
         url.setFont(new Font("Arial", Font.PLAIN, 16));
         url.setForeground(fontColor);
         url.setBackground(color);
+        url.setMinimumSize(new Dimension(10*textWidth, 24));
+
         c.gridx = 0;
         c.gridy = 4;
         c.weightx = 1;
@@ -407,6 +430,7 @@ public class AppCore extends JFrame implements ActionListener {
         username.setFont(new Font("Arial", Font.PLAIN, 16));
         username.setForeground(fontColor);
         username.setBackground(color);
+        username.setMinimumSize(new Dimension(10*textWidth, 24));
         c.gridx = 0;
         c.gridy = 6;
         c.weightx = 1;
@@ -434,6 +458,7 @@ public class AppCore extends JFrame implements ActionListener {
         password.setFont(new Font("Arial", Font.PLAIN, 16));
         password.setForeground(fontColor);
         password.setBackground(color);
+        password.setMinimumSize(new Dimension(10*textWidth, 24));
         c.gridx = 0;
         c.gridy = 8;
         c.weightx = 1;
@@ -461,6 +486,7 @@ public class AppCore extends JFrame implements ActionListener {
         notes.setFont(new Font("Arial", Font.PLAIN, 16));
         notes.setForeground(fontColor);
         notes.setBackground(color);
+        notes.setMinimumSize(new Dimension(10*textWidth, 24));
         c.gridx = 0;
         c.gridy = 10;
         c.weightx = 1;

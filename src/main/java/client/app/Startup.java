@@ -26,6 +26,13 @@ public class Startup {
     public static void main(String[] args) throws IOException {
 
         final Taskbar taskbar = Taskbar.getTaskbar();
+        UIManager.LookAndFeelInfo looks[] = UIManager.getInstalledLookAndFeels();
+    try{
+        //0-Swing, 1-Mac, 2-?, 3-Windows, 4-Old Windows
+        UIManager.setLookAndFeel(looks[3].getClassName());
+    }catch(Exception e){
+        System.out.println(e.getMessage());
+    }
 
         // open the Panel
         frame = new JFrame("FirstLane");
