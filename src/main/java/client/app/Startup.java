@@ -10,12 +10,12 @@ import javax.imageio.ImageIO;
 public class Startup {
 
     static JFrame frame;
-    
+
     public static void main(String[] args) throws IOException {
 
         final Taskbar taskbar = Taskbar.getTaskbar();
 
-        //open the Panel
+        // open the Panel
         frame = new JFrame("FirstLane");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 500);
@@ -26,30 +26,31 @@ public class Startup {
         frame.setIconImage(image);
 
         try {
-            //set icon for mac os (and other systems which do support this method)
+            // set icon for mac os
             taskbar.setIconImage(image);
         } catch (final UnsupportedOperationException e) {
-            System.out.println("The os does not support: 'taskbar.setIconImage'");
+            System.out.println("Not supported by this OS: 'taskbar.setIconImage'");
         } catch (final SecurityException e) {
-            System.out.println("There was a security exception for: 'taskbar.setIconImage'");
+            System.out.println("Security exception for: 'taskbar.setIconImage'");
         }
 
-        //center the frame
+        // center the frame
         Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-        frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
+        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
 
         Container c = frame.getContentPane();
         SpringLayout layout = new SpringLayout();
         c.setLayout(layout);
-        c.setBackground(Color.white);        
+        c.setBackground(Color.white);
 
-        //add logo to frame
+        // add logo to frame
         ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
-        ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 20,logo.getIconHeight() / 20, Image.SCALE_SMOOTH));
+        ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 20,
+                logo.getIconHeight() / 20, Image.SCALE_SMOOTH));
         JLabel scaledLogo = new JLabel(scaledImage);
         frame.add(scaledLogo);
 
-        //center the middle of logo with middle of frame
+        // center the middle of logo with middle of frame
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, scaledLogo, 250, SpringLayout.HORIZONTAL_CENTER, frame);
         scaledLogo.setPreferredSize(new Dimension(475, 225));
 
@@ -68,8 +69,8 @@ public class Startup {
         c.add(loginButton);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, loginButton, 0, SpringLayout.HORIZONTAL_CENTER, c);
         layout.putConstraint(SpringLayout.NORTH, loginButton, 350, SpringLayout.NORTH, c);
-        //button should be the width of the text
-        loginButton.setPreferredSize(new Dimension(loginButton.getText().length()*25, 50));
+        // button should be the width of the text
+        loginButton.setPreferredSize(new Dimension(loginButton.getText().length() * 25, 50));
         loginButton.addActionListener(new LoginPressed());
 
         JButton registerButton = new JButton("Register");
@@ -84,9 +85,9 @@ public class Startup {
         registerButton.setPreferredSize(new Dimension(360, 50));
         registerButton.addActionListener(new RegisterPressed());
 
-        //Finish Frame
+        // Finish Frame
         frame.setSize(500, 500);
-        frame.setLocation(dim.width/2-frame.getSize().width/2, dim.height/2-frame.getSize().height/2);
+        frame.setLocation(dim.width / 2 - frame.getSize().width / 2, dim.height / 2 - frame.getSize().height / 2);
         frame.setVisible(true);
         frame.setResizable(false);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -96,13 +97,14 @@ public class Startup {
     private static class LoginPressed implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             try {
-            Client client = new Client();
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            Login login = new Login(client);  
-            login.setLocation (dim.width/2-login.getSize().width/2, dim.height/2-login.getSize().height/2);
+                Client client = new Client();
+                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                Login login = new Login(client);
+                login.setLocation(dim.width / 2 - login.getSize().width / 2,
+                        dim.height / 2 - login.getSize().height / 2);
 
-            frame.dispose();
-        
+                frame.dispose();
+
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
@@ -112,16 +114,15 @@ public class Startup {
     private static class RegisterPressed implements ActionListener {
         public void actionPerformed(ActionEvent e) {
             try {
-            Client client = new Client();
-            Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
-            Register register = new Register(client);  
-            register.setLocation (dim.width/2-register.getSize().width/2, dim.height/2-register.getSize().height/2);
-            
+                Client client = new Client();
+                Dimension dim = Toolkit.getDefaultToolkit().getScreenSize();
+                Register register = new Register(client);
+                register.setLocation(dim.width / 2 - register.getSize().width / 2,
+                        dim.height / 2 - register.getSize().height / 2);
 
             } catch (IOException ex) {
                 ex.printStackTrace();
             }
         }
     }
-
 }

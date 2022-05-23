@@ -9,12 +9,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 import javax.imageio.ImageIO;
-import javax.imageio.plugins.jpeg.JPEGHuffmanTable;
 
 import java.io.IOException;
-
-import java.util.TreeMap;
-import java.util.SortedMap;
 
 import org.json.JSONObject;
 
@@ -31,10 +27,9 @@ public class AppCore extends JFrame implements ActionListener {
 
     int maxSize, selectedIndex;
     BufferedImage image;
-    String user, salt, nameStr, usernameStr, urlStr, passStr, notesStr, selectedUUID;
+    String user, salt, nameStr, usernameStr, urlStr, passStr, notesStr, selectedUUID, passPanelMode;
     Client client;
     boolean passwordSelected, isDark;
-    SortedMap<String, String> passwords;
     SpringLayout layout;
     GridBagConstraints c;
     Color fontColor, addPanelBg;
@@ -45,8 +40,6 @@ public class AppCore extends JFrame implements ActionListener {
         this.client = client;
 
         passwordSelected = false;
-
-        // Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 
         layout = new SpringLayout();
         JFrame frame = new JFrame("FirstLane");
@@ -90,10 +83,6 @@ public class AppCore extends JFrame implements ActionListener {
         addPass.addActionListener(this);
         addPass.setBorderPainted(false);
 
-        /*gapPanel = new JPanel();
-        gapPanel.setPreferredSize(new Dimension(10, 600));
-        gapPanel.setBackground(Color.WHITE);*/
-
         navPanel = new JPanel();
         BoxLayout boxLayout = new BoxLayout(navPanel, BoxLayout.Y_AXIS);
         // set boxlayout width to 250
@@ -120,27 +109,31 @@ public class AppCore extends JFrame implements ActionListener {
         JButton settings = new JButton();
         settings.setIcon(new ImageIcon("./src/main/java/client/app/content/settings-50px-background.png"));
         settings.setBorderPainted(false);
+        c = new GridBagConstraints();
         c.gridx = 0;
         c.gridy = 0;
         // add top padding
         c.insets = new Insets(0, 0, 0, 0);
         sidePanel.add(settings, c);
 
-        //add button to sidePanel
+        // add button to sidePanel
         JButton darkMode = new JButton();
         darkMode.setIcon(new ImageIcon("./src/main/java/client/app/content/darkMode-50px.png"));
         darkMode.setBorderPainted(false);
+        c = new GridBagConstraints();
+
         c.gridx = 0;
         c.gridy = 1;
         // add top padding
         c.insets = new Insets(30, 0, 0, 0);
         sidePanel.add(darkMode, c);
 
-
         // add button to sidePanel
         logout = new JButton();
         logout.setIcon(new ImageIcon("./src/main/java/client/app/content/darkLock-closed-50px.png"));
         logout.setBorderPainted(false);
+        c = new GridBagConstraints();
+
         c.gridx = 0;
         c.gridy = 2;
         // add top padding
@@ -157,26 +150,32 @@ public class AppCore extends JFrame implements ActionListener {
                 navPanel.setBackground(new Color(32, 34, 37));
                 sidePanel.setBackground(new Color(32, 34, 37));
                 mainPanel.setBackground(new Color(56, 57, 62));
-                passScrollPane.getViewport().setBackground(new Color(47, 49, 54));
+                passList.setBackground(new Color(47, 49, 54));
+                passList.setForeground(Color.WHITE);
                 fontColor = new Color(255, 255, 255);
                 addPanelBg = new Color(56, 57, 62);
-                settings.setIcon(new ImageIcon("src/main/java/client/app/content/settings-50px-background-inverse.png"));
+                settings.setIcon(
+                        new ImageIcon("src/main/java/client/app/content/settings-50px-background-inverse.png"));
                 darkMode.setIcon(new ImageIcon("src/main/java/client/app/content/darkMode-50px-inverse.png"));
                 logout.setIcon(new ImageIcon("src/main/java/client/app/content/darkLock-closed-50px-inverse.png"));
-                showPasswordPanel("", "", "", "", "");
+                passPanelMode = "dark";
+                showPasswordPanel("", "", "", "", "", passPanelMode);
                 isDark = true;
             } else {
-                navPanel.setBackground(Color.WHITE);
-                sidePanel.setBackground(Color.WHITE);
+                navPanel.setBackground(new Color(232, 232, 232));
+                sidePanel.setBackground(new Color(232, 232, 232));
                 mainPanel.setBackground(Color.WHITE);
-                passScrollPane.setBackground(Color.WHITE);
+                passList.setBackground(new Color(232, 232, 232));
+                passList.setForeground(new Color(0, 0, 0));
                 fontColor = new Color(0, 0, 0);
                 addPanelBg = new Color(255, 255, 255);
                 settings.setIcon(new ImageIcon("src/main/java/client/app/content/settings-50px-background.png"));
                 darkMode.setIcon(new ImageIcon("src/main/java/client/app/content/darkMode-50px.png"));
                 logout.setIcon(new ImageIcon("src/main/java/client/app/content/darkLock-closed-50px.png"));
-                showPasswordPanel("", "", "", "", "");
+                passPanelMode = null;
+                showPasswordPanel("", "", "", "", "", passPanelMode);
                 isDark = false;
+
             }
         });
 
@@ -188,13 +187,15 @@ public class AppCore extends JFrame implements ActionListener {
 
         mainPanel.add(navPanel, c);
 
-        //mainPanel.add(navPanel);
-        showPasswordPanel("", "", "", "", "");
+        // mainPanel.add(navPanel);
+        showPasswordPanel("", "", "", "", "", passPanelMode);
         // put sidePanel on the right side of the mainPanel
         layout.putConstraint(SpringLayout.EAST, sidePanel, 0, SpringLayout.EAST, mainPanel);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, addPanel, 0, SpringLayout.HORIZONTAL_CENTER, mainPanel);
 
         // contraints for sidepanel to keep it on the right side of the mainPanel
+        c = new GridBagConstraints();
+
         c.gridx = 6;
         c.gridy = 0;
         c.gridheight = 1;
@@ -206,7 +207,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         add(mainPanel, BorderLayout.WEST);
         // setExtendedState(getExtendedState() | JFrame.MAXIMIZED_BOTH);
-        setSize(770, 430);
+        setSize(760, 430);
         setResizable(false);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -262,7 +263,7 @@ public class AppCore extends JFrame implements ActionListener {
                     urlStr = passData.getString("url");
                     passStr = passData.getString("password");
                     notesStr = passData.getString("notes");
-                    showPasswordPanel(nameStr, usernameStr, urlStr, passStr, notesStr);
+                    showPasswordPanel(nameStr, usernameStr, urlStr, passStr, notesStr, passPanelMode);
                     addPanel.setVisible(true);
                     System.out.println("showpasswordpanel called");
 
@@ -279,11 +280,10 @@ public class AppCore extends JFrame implements ActionListener {
             // add "New Password" to list
             listModel.addElement("  New Password");
             passList.setSelectedValue("  New Password", true);
-            showPasswordPanel("", "", "", "", "");
+            showPasswordPanel("", "", "", "", "", passPanelMode);
             addPanel.setVisible(true);
 
-        }
-        else if (e.getSource() == logout) {
+        } else if (e.getSource() == logout) {
             System.out.println("Logout button pressed");
             // logout
             client.logout();
@@ -291,14 +291,22 @@ public class AppCore extends JFrame implements ActionListener {
     }
 
     public void showPasswordPanel(String nameText, String usernameText, String urlText, String passwordText,
-            String notesText) {
+            String notesText, String mode) {
 
         if (addPanel != null) {
             addPanel.setVisible(false);
         }
 
+        Color color;
+
+        if (mode == null) {
+            color = new Color(255, 255, 255);
+        } else {
+            color = new Color(65, 68, 74);
+        }
+
         int leftPadding = 10;
-        int textWidth = 30;
+        int textWidth = 29;
         int gridWidth = 3;
 
         addPanel = new JPanel();
@@ -333,6 +341,7 @@ public class AppCore extends JFrame implements ActionListener {
         JTextField name = new JTextField(nameText, textWidth);
         name.setFont(new Font("Arial", Font.PLAIN, 16));
         name.setForeground(fontColor);
+        name.setBackground(color);
         c.gridx = 0;
         c.gridy = 2;
         c.weightx = 1;
@@ -358,6 +367,7 @@ public class AppCore extends JFrame implements ActionListener {
         JTextField url = new JTextField(urlText, textWidth);
         url.setFont(new Font("Arial", Font.PLAIN, 16));
         url.setForeground(fontColor);
+        url.setBackground(color);
         c.gridx = 0;
         c.gridy = 4;
         c.weightx = 1;
@@ -384,6 +394,7 @@ public class AppCore extends JFrame implements ActionListener {
         JTextField username = new JTextField(usernameText, textWidth);
         username.setFont(new Font("Arial", Font.PLAIN, 16));
         username.setForeground(fontColor);
+        username.setBackground(color);
         c.gridx = 0;
         c.gridy = 6;
         c.weightx = 1;
@@ -410,6 +421,7 @@ public class AppCore extends JFrame implements ActionListener {
         JTextField password = new JTextField(passwordText, textWidth);
         password.setFont(new Font("Arial", Font.PLAIN, 16));
         password.setForeground(fontColor);
+        password.setBackground(color);
         c.gridx = 0;
         c.gridy = 8;
         c.weightx = 1;
@@ -436,6 +448,7 @@ public class AppCore extends JFrame implements ActionListener {
         JTextField notes = new JTextField(notesText, textWidth);
         notes.setFont(new Font("Arial", Font.PLAIN, 16));
         notes.setForeground(fontColor);
+        notes.setBackground(color);
         c.gridx = 0;
         c.gridy = 10;
         c.weightx = 1;
@@ -446,13 +459,14 @@ public class AppCore extends JFrame implements ActionListener {
 
         addPanel.add(notes, c);
 
-        JButton save = new JButton("Save");
+        JButton save = new JButton("Save as new");
+        save.setPreferredSize(new Dimension(125, 25));
         save.setFont(new Font("Arial", Font.PLAIN, 16));
         save.setForeground(new Color(27, 38, 79));
         c.gridx = 0;
         c.gridy = 11;
         c.weightx = 1;
-        c.gridwidth = 1;
+        c.gridwidth = 2;
 
         c.anchor = GridBagConstraints.WEST;
         c.insets = new Insets(0, leftPadding, 0, 0);
@@ -460,37 +474,40 @@ public class AppCore extends JFrame implements ActionListener {
         addPanel.add(save, c);
 
         JButton delete = new JButton("Delete");
+        delete.setPreferredSize(new Dimension(100, 25));
+
         delete.setFont(new Font("Arial", Font.PLAIN, 16));
         delete.setForeground(new Color(27, 38, 79));
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridy = 11;
         c.weightx = 0.67;
-        c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
-        //c.insets = new Insets(0, leftPadding+50, 0, 0);
+        c.insets = new Insets(0, leftPadding + 125, 0, 0);
 
         addPanel.add(delete, c);
 
         JButton cancel = new JButton("Cancel");
+        cancel.setPreferredSize(new Dimension(100, 25));
         cancel.setFont(new Font("Arial", Font.PLAIN, 16));
         cancel.setForeground(new Color(27, 38, 79));
-        c.gridx = 2;
+        c.gridx = 0;
         c.gridy = 11;
         c.weightx = 0.33;
-        c.gridwidth = 1;
         c.anchor = GridBagConstraints.WEST;
-        //c.insets = new Insets(0, leftPadding+100, 0, 0);
+        c.insets = new Insets(0, leftPadding + 225, 0, 0);
 
         addPanel.add(cancel, c);
 
         // actionlistener for save button
         save.addActionListener(l -> {
             try {
+                String itemName = name.getText()/* + UUID.randomUUID().toString() */;
+
                 // check for changes in the fields
-                if (name.getText().equals(nameText) || url.getText() != urlText || username.getText() != usernameText
-                        || password.getText() != passwordText || notes.getText() != notesText) {
+                if (!(name.getText().equals(nameText)) || !(url.getText().equals(urlText))
+                        || !(username.getText().equals(usernameText))
+                        || !(password.getText().equals(passwordText)) || !(notes.getText().equals(notesText))) {
                     System.out.println("changes detected");
-                    String itemName = name.getText()/* + UUID.randomUUID().toString() */;
                     System.out.println(name.getText() + " should equal " + nameText);
                     System.out.println(url.getText() + " should equal " + urlText);
                     System.out.println(username.getText() + " should equal " + usernameText);
@@ -499,6 +516,7 @@ public class AppCore extends JFrame implements ActionListener {
 
                     listModel.addElement(itemName);
                     // remove "New Password" from list
+
                     listModel.removeElement("New Password");
                     data = client.addPass(itemName, username.getText(), password.getText(), url.getText(),
                             notes.getText());
@@ -519,6 +537,32 @@ public class AppCore extends JFrame implements ActionListener {
 
                 } else {
                     System.out.println("no changes detected");
+                    // popup window saying no changes detected
+                    int dialogResult = JOptionPane.showConfirmDialog(null,
+                            "No changes have been made to the password, do you still want to save as new?", "FirstLane",
+                            JOptionPane.YES_NO_OPTION);
+                    if (dialogResult == JOptionPane.YES_OPTION) {
+                        listModel.addElement(itemName);
+                        // remove "New Password" from list
+
+                        listModel.removeElement("New Password");
+                        data = client.addPass(itemName, username.getText(), password.getText(), url.getText(),
+                                notes.getText());
+
+                        // remove all elements from list
+                        listModel.removeAllElements();
+
+                        if (data != null) {
+                            for (String key : data.keySet()) {
+                                // add item name to list
+                                // add itemname and uuid to new json object
+                                JSONObject item = data.getJSONObject(key);
+                                String passName = item.getString("name");
+                                String itemURL = item.getString("url");
+                                listModel.addElement("  " + passName + " | " + itemURL);
+                            }
+                        }
+                    }
                 }
             } catch (Exception e) {
                 e.printStackTrace();
@@ -540,7 +584,7 @@ public class AppCore extends JFrame implements ActionListener {
                     data = client.deletePass(selectedIndex);
                     // remove from list
                     listModel.removeElement("  " + nameText + " | " + urlText);
-                    showPasswordPanel("", "", "", "", "");
+                    showPasswordPanel("", "", "", "", "", passPanelMode);
                 }
 
             } catch (Exception e) {
