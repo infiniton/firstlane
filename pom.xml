@@ -9,8 +9,8 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>server</groupId>
-	<artifactId>server</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<artifactId>firstlane</artifactId>
+	<version>v1.0</version>
 	<packaging>jar</packaging>
 	<name>rest</name>
 	<description>REST API for firstlane pw mgr</description>

@@ -5,7 +5,19 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import java.io.*;
+import java.net.URL;
+
 import javax.imageio.ImageIO;
+
+/***
+ * Main program for both the client and server.rest
+ * 
+ * To start the server, run the following command in the terminal:
+ * java -jar server-0.0.1-SNAPSHOT.jar   
+ * 
+ * To start the client, run the following command in the terminal:
+ * java -cp server-0.0.1-SNAPSHOT.jar -Dloader.main=client.app.Startup org.springframework.boot.loader.PropertiesLauncher
+ */
 
 public class Startup {
 
@@ -21,8 +33,10 @@ public class Startup {
         frame.setSize(500, 500);
         frame.setVisible(true);
 
-        File imagepath = new File("./src/main/java/client/app/content/logo-no-text.png");
-        BufferedImage image = ImageIO.read(imagepath);
+        //URL fileUrl = Startup.class.getResource("/client/app/content/logo-no-text.png");
+        //File imagepath = new File("./src/main/java/client/app/content/logo-no-text.png");
+        //File imagepath = new File(fileUrl.getFile());
+        BufferedImage image = ImageIO.read(Startup.class.getResourceAsStream("/client/app/content/logo-no-text.png"));
         frame.setIconImage(image);
 
         try {
@@ -44,7 +58,8 @@ public class Startup {
         c.setBackground(Color.white);
 
         // add logo to frame
-        ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
+        BufferedImage logoImage = ImageIO.read(Startup.class.getResource("/client/app/content/logo.png"));
+        ImageIcon logo = new ImageIcon(logoImage);
         ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 20,
                 logo.getIconHeight() / 20, Image.SCALE_SMOOTH));
         JLabel scaledLogo = new JLabel(scaledImage);

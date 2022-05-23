@@ -70,6 +70,7 @@ public class AppCore extends JFrame implements ActionListener {
         passList = new JList<>(listModel);
         passList.setFixedCellHeight(50);
         passList.setLayoutOrientation(JList.VERTICAL);
+        passList.setBackground(new Color(232, 232, 232));
 
         passScrollPane = new JScrollPane(passList);
         passScrollPane.setViewportView(passList);
@@ -77,7 +78,7 @@ public class AppCore extends JFrame implements ActionListener {
         // create a bottom border for the scrollpane
         passScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
 
-        ImageIcon plus = new ImageIcon("./src/main/java/client/app/content/plus.png");
+        ImageIcon plus = new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/plus.png")));
 
         addPass = new JButton(plus);
         addPass.addActionListener(this);
@@ -88,7 +89,7 @@ public class AppCore extends JFrame implements ActionListener {
         // set boxlayout width to 250
         navPanel.setPreferredSize(new Dimension(275, 400));
         navPanel.setLayout(boxLayout);
-        navPanel.setBackground(Color.WHITE);
+        navPanel.setBackground(new Color(232, 232, 232));
         navPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 
         // navPanel.add(new JLabel("Choose to edit an item or add a new one:"));
@@ -103,11 +104,12 @@ public class AppCore extends JFrame implements ActionListener {
         sidePanel.setPreferredSize(new Dimension(75, 400));
         sidePanel.setLayout(new GridBagLayout());
         sidePanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
-        sidePanel.setBackground(Color.WHITE);
+        sidePanel.setBackground(new Color(232, 232, 232));
 
         // add button to sidePanel
         JButton settings = new JButton();
-        settings.setIcon(new ImageIcon("./src/main/java/client/app/content/settings-50px-background.png"));
+        settings.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
+
         settings.setBorderPainted(false);
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -118,7 +120,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         // add button to sidePanel
         JButton darkMode = new JButton();
-        darkMode.setIcon(new ImageIcon("./src/main/java/client/app/content/darkMode-50px.png"));
+        darkMode.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
         darkMode.setBorderPainted(false);
         c = new GridBagConstraints();
 
@@ -130,7 +132,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         // add button to sidePanel
         logout = new JButton();
-        logout.setIcon(new ImageIcon("./src/main/java/client/app/content/darkLock-closed-50px.png"));
+        logout.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));
         logout.setBorderPainted(false);
         c = new GridBagConstraints();
 
@@ -154,10 +156,14 @@ public class AppCore extends JFrame implements ActionListener {
                 passList.setForeground(Color.WHITE);
                 fontColor = new Color(255, 255, 255);
                 addPanelBg = new Color(56, 57, 62);
-                settings.setIcon(
-                        new ImageIcon("src/main/java/client/app/content/settings-50px-background-inverse.png"));
-                darkMode.setIcon(new ImageIcon("src/main/java/client/app/content/darkMode-50px-inverse.png"));
-                logout.setIcon(new ImageIcon("src/main/java/client/app/content/darkLock-closed-50px-inverse.png"));
+                
+                try {
+                    settings.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background-inverse.png"))));
+                    darkMode.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px-inverse.png"))));
+                    logout.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px-inverse.png"))));;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
                 passPanelMode = "dark";
                 showPasswordPanel("", "", "", "", "", passPanelMode);
                 isDark = true;
@@ -169,9 +175,15 @@ public class AppCore extends JFrame implements ActionListener {
                 passList.setForeground(new Color(0, 0, 0));
                 fontColor = new Color(0, 0, 0);
                 addPanelBg = new Color(255, 255, 255);
-                settings.setIcon(new ImageIcon("src/main/java/client/app/content/settings-50px-background.png"));
-                darkMode.setIcon(new ImageIcon("src/main/java/client/app/content/darkMode-50px.png"));
-                logout.setIcon(new ImageIcon("src/main/java/client/app/content/darkLock-closed-50px.png"));
+                try {
+                    settings.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
+                    darkMode.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
+                    logout.setIcon(new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));;
+                } catch (IOException e) {
+                    e.printStackTrace();
+
+                }
+
                 passPanelMode = null;
                 showPasswordPanel("", "", "", "", "", passPanelMode);
                 isDark = false;

@@ -36,7 +36,8 @@ public class Login extends JFrame implements ActionListener, KeyListener {
         setIconImage(image);
 
         // add logo to panel
-        ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
+        BufferedImage logoImage = ImageIO.read(Startup.class.getResource("/client/app/content/logo.png"));
+        ImageIcon logo = new ImageIcon(logoImage);
         ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 50,
                 logo.getIconHeight() / 50, Image.SCALE_SMOOTH));
         JLabel scaledLogo = new JLabel(scaledImage);
@@ -70,7 +71,8 @@ public class Login extends JFrame implements ActionListener, KeyListener {
         layout.putConstraint(SpringLayout.NORTH, passwordText, 270, SpringLayout.NORTH, panel);
         passwordText.setPreferredSize(new Dimension(150, 45));
 
-        ImageIcon loginPic = new ImageIcon("./src/main/java/client/app/content/lock-closed-r.png");
+        BufferedImage loginImage = ImageIO.read(Startup.class.getResource("/client/app/content/lock-closed-r.png"));
+        ImageIcon loginPic = new ImageIcon(loginImage);
         ImageIcon scaledloginButton = new ImageIcon(loginPic.getImage().getScaledInstance(loginPic.getIconWidth() / 4,
                 loginPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
         JButton loginButton = new JButton(scaledloginButton);
@@ -85,15 +87,17 @@ public class Login extends JFrame implements ActionListener, KeyListener {
         loginButton.setBorderPainted(false);
         loginButton.setForeground(Color.white);
 
-        ImageIcon xPic = new ImageIcon("./src/main/java/client/app/content/redX.png");
+        BufferedImage xBufferedImage = ImageIO.read(Startup.class.getResource("/client/app/content/redX.png"));
+        ImageIcon xPic = new ImageIcon(xBufferedImage);
         ImageIcon scaledXPic = new ImageIcon(xPic.getImage().getScaledInstance(xPic.getIconWidth() / 15,
                 xPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
         badLogin = new JLabel(scaledXPic);
         badLogin.setVisible(false);
 
-        ImageIcon chekcPic = new ImageIcon("./src/main/java/client/app/content/check.png");
-        ImageIcon scaledCheckPic = new ImageIcon(chekcPic.getImage().getScaledInstance(chekcPic.getIconWidth() / 15,
-                chekcPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
+        BufferedImage chkBufferedImage = ImageIO.read(Startup.class.getResource("/client/app/content/check.png"));
+        ImageIcon checkPic = new ImageIcon(chkBufferedImage);
+        ImageIcon scaledCheckPic = new ImageIcon(checkPic.getImage().getScaledInstance(checkPic.getIconWidth() / 15,
+                checkPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
         goodLogin = new JLabel(scaledCheckPic);
         goodLogin.setVisible(false);
 

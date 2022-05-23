@@ -2,7 +2,11 @@ package client.app;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.image.BufferedImage;
 import javax.swing.*;
+import java.io.IOException;
+
+import javax.imageio.ImageIO;
 
 //import org.json.JSONObject;
 
@@ -18,7 +22,7 @@ public class Register extends JFrame implements ActionListener {
 
     Client client;
 
-    public Register(Client client) {
+    public Register(Client client) throws IOException {
         this.client = client;
 
         SpringLayout layout = new SpringLayout();
@@ -27,8 +31,10 @@ public class Register extends JFrame implements ActionListener {
         panel.setBackground(Color.WHITE);
 
         //add logo to panel
-        ImageIcon logo = new ImageIcon("./src/main/java/client/app/content/logo.png");
-        ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 50,logo.getIconHeight() / 50, Image.SCALE_SMOOTH));
+        BufferedImage logoImage = ImageIO.read(Startup.class.getResource("/client/app/content/logo.png"));
+        ImageIcon logo = new ImageIcon(logoImage);
+        ImageIcon scaledImage = new ImageIcon(logo.getImage().getScaledInstance(logo.getIconWidth() / 50,
+                logo.getIconHeight() / 50, Image.SCALE_SMOOTH));
         JLabel scaledLogo = new JLabel(scaledImage);
         panel.add(scaledLogo);
 
@@ -73,35 +79,36 @@ public class Register extends JFrame implements ActionListener {
         layout.putConstraint(SpringLayout.NORTH, rPasswordText, 310, SpringLayout.NORTH, panel);
         rPasswordText.setPreferredSize(new Dimension(150, 45));
 
-        ImageIcon loginPic = new ImageIcon("./src/main/java/client/app/content/lock-closed-r.png");
-        ImageIcon scaledloginButton = new ImageIcon(loginPic.getImage().getScaledInstance(loginPic.getIconWidth() / 4,
-                loginPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
-        JButton loginButton = new JButton(scaledloginButton);
-        panel.add(loginButton);
+        BufferedImage registerImage = ImageIO.read(Startup.class.getResource("/client/app/content/lock-closed-r.png"));
+        ImageIcon registerPic = new ImageIcon(registerImage);
+        ImageIcon scaledloginButton = new ImageIcon(registerPic.getImage().getScaledInstance(registerPic.getIconWidth() / 4,
+                registerPic.getIconHeight() / 4, Image.SCALE_SMOOTH));
+        JButton registerButton = new JButton(scaledloginButton);
+        panel.add(registerButton);
 
-        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, loginButton, 0, SpringLayout.HORIZONTAL_CENTER, panel);
-        layout.putConstraint(SpringLayout.NORTH, loginButton, 400, SpringLayout.NORTH, panel);
-        loginButton.setPreferredSize(new Dimension(50, 50));
+        layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, registerButton, 0, SpringLayout.HORIZONTAL_CENTER, panel);
+        layout.putConstraint(SpringLayout.NORTH, registerButton, 400, SpringLayout.NORTH, panel);
+        registerButton.setPreferredSize(new Dimension(50, 50));
 
-        loginButton.setOpaque(false);
-        loginButton.setContentAreaFilled(false);
-        loginButton.setBorderPainted(false);
-        loginButton.setForeground(Color.white);
+        registerButton.setOpaque(false);
+        registerButton.setContentAreaFilled(false);
+        registerButton.setBorderPainted(false);
+        registerButton.setForeground(Color.white);
 
-        ImageIcon xPic = new ImageIcon("./src/main/java/client/app/content/redX.png");
+        BufferedImage xBufferedImage = ImageIO.read(Startup.class.getResource("/client/app/content/redX.png"));
+        ImageIcon xPic = new ImageIcon(xBufferedImage);
         ImageIcon scaledXPic = new ImageIcon(xPic.getImage().getScaledInstance(xPic.getIconWidth() / 15,
                 xPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
         badReg = new JLabel(scaledXPic);
         badReg.setVisible(false);
 
-        ImageIcon chekcPic = new ImageIcon("./src/main/java/client/app/content/check.png");
-        ImageIcon scaledCheckPic = new ImageIcon(chekcPic.getImage().getScaledInstance(chekcPic.getIconWidth() / 15,
-        chekcPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
+        BufferedImage chkBufferedImage = ImageIO.read(Startup.class.getResource("/client/app/content/check.png"));
+        ImageIcon checkPic = new ImageIcon(chkBufferedImage);
+        ImageIcon scaledCheckPic = new ImageIcon(checkPic.getImage().getScaledInstance(checkPic.getIconWidth() / 15,
+                checkPic.getIconHeight() / 15, Image.SCALE_SMOOTH));
         goodReg = new JLabel(scaledCheckPic);
         goodReg.setVisible(false);
-
-
-
+        
         panel.add(badReg);
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, badReg, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         layout.putConstraint(SpringLayout.NORTH, badReg, 350, SpringLayout.NORTH, panel);
@@ -127,7 +134,7 @@ public class Register extends JFrame implements ActionListener {
         layout.putConstraint(SpringLayout.NORTH, goodReg, 350, SpringLayout.NORTH, panel);
 
 
-        loginButton.addActionListener(this);
+        registerButton.addActionListener(this);
 
         message = new JLabel();
 
