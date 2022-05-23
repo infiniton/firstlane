@@ -29,10 +29,10 @@ public class AppCore extends JFrame implements ActionListener {
     BufferedImage image;
     String user, salt, nameStr, usernameStr, urlStr, passStr, notesStr, selectedUUID, passPanelMode;
     Client client;
-    boolean passwordSelected, isDark;
+    boolean passwordSelected, isDark, windowsOS;
     SpringLayout layout;
     GridBagConstraints c;
-    Color fontColor, addPanelBg;
+    Color fontColor, addPanelBg, color232;
 
     final Taskbar taskbar = Taskbar.getTaskbar();
 
@@ -54,6 +54,16 @@ public class AppCore extends JFrame implements ActionListener {
 
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
 
+        //if os is windows, set color232 to white
+        if (System.getProperty("os.name").contains("Windows")) {
+            color232 = Color.WHITE;
+            windowsOS = true;
+
+        } else {
+            color232 = new Color (232, 232, 232);
+            windowsOS = false; // yay!
+        }
+
         try {
             // set icon for mac os (and other systems which do support this method)
             taskbar.setIconImage(image);
@@ -66,7 +76,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         mainPanel = new JPanel(layout);
         frame.setContentPane(mainPanel);
-        mainPanel.setBackground(Color.WHITE);
+        mainPanel.setBackground(color232);
 
         mainPanel.setLayout(new GridBagLayout());
         c = new GridBagConstraints();
@@ -78,12 +88,12 @@ public class AppCore extends JFrame implements ActionListener {
         passList = new JList<>(listModel);
         passList.setFixedCellHeight(50);
         passList.setLayoutOrientation(JList.VERTICAL);
-        passList.setBackground(new Color(232, 232, 232));
+        passList.setBackground(color232);
 
         passScrollPane = new JScrollPane(passList);
         passScrollPane.setViewportView(passList);
         passScrollPane.setBackground(Color.white);
-        passScrollPane.setMinimumSize(new Dimension(200, 300));
+        //passScrollPane.setMinimumSize(new Dimension(200, 300));
         // create a bottom border for the scrollpane
         passScrollPane.setBorder(BorderFactory.createMatteBorder(0, 0, 1, 0, Color.GRAY));
 
@@ -98,7 +108,7 @@ public class AppCore extends JFrame implements ActionListener {
         // set boxlayout width to 250
         navPanel.setPreferredSize(new Dimension(275, 400));
         navPanel.setLayout(boxLayout);
-        navPanel.setBackground(new Color(232, 232, 232));
+        navPanel.setBackground(color232);
         navPanel.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, Color.GRAY));
 
         // navPanel.add(new JLabel("Choose to edit an item or add a new one:"));
@@ -113,20 +123,7 @@ public class AppCore extends JFrame implements ActionListener {
         sidePanel.setPreferredSize(new Dimension(75, 400));
         sidePanel.setLayout(new GridBagLayout());
         sidePanel.setBorder(BorderFactory.createMatteBorder(0, 1, 0, 0, Color.GRAY));
-        sidePanel.setBackground(new Color(232, 232, 232));
-
-        // add button to sidePanel
-        JButton settings = new JButton();
-        settings.setIcon(new ImageIcon(
-                ImageIO.read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
-
-        settings.setBorderPainted(false);
-        c = new GridBagConstraints();
-        c.gridx = 0;
-        c.gridy = 0;
-        // add top padding
-        c.insets = new Insets(0, 0, 0, 0);
-        sidePanel.add(settings, c);
+        sidePanel.setBackground(color232);
 
         // add button to sidePanel
         JButton darkMode = new JButton();
@@ -138,7 +135,7 @@ public class AppCore extends JFrame implements ActionListener {
         c.gridx = 0;
         c.gridy = 1;
         // add top padding
-        c.insets = new Insets(30, 0, 0, 0);
+        c.insets = new Insets(0, 0, 0, 0);
         sidePanel.add(darkMode, c);
 
         // add button to sidePanel
@@ -170,38 +167,47 @@ public class AppCore extends JFrame implements ActionListener {
                 addPanelBg = new Color(56, 57, 62);
 
                 try {
-                    settings.setIcon(new ImageIcon(ImageIO.read(
-                            Startup.class.getResource("/client/app/content/settings-50px-background-inverse.png"))));
+                    /*settings.setIcon(new ImageIcon(ImageIO.read(
+                            Startup.class.getResource("/client/app/content/settings-50px-background-inverse.png"))));*/
                     darkMode.setIcon(new ImageIcon(
                             ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px-inverse.png"))));
                     logout.setIcon(new ImageIcon(ImageIO
                             .read(Startup.class.getResource("/client/app/content/darkLock-closed-50px-inverse.png"))));
-                    ;
+                    
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
+                if (windowsOS) {
+                    logout.setBackground(new Color(32, 34, 37));
+                    darkMode.setBackground(new Color(32, 34, 37));
+                }
+                
                 passPanelMode = "dark";
                 showPasswordPanel("", "", "", "", "", passPanelMode);
                 isDark = true;
             } else {
-                navPanel.setBackground(new Color(232, 232, 232));
-                sidePanel.setBackground(new Color(232, 232, 232));
+                navPanel.setBackground(color232);
+                sidePanel.setBackground(color232);
                 mainPanel.setBackground(Color.WHITE);
-                passList.setBackground(new Color(232, 232, 232));
+                passList.setBackground(color232);
                 passList.setForeground(new Color(0, 0, 0));
                 fontColor = new Color(0, 0, 0);
                 addPanelBg = new Color(255, 255, 255);
                 try {
-                    settings.setIcon(new ImageIcon(ImageIO
-                            .read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));
+                    /*settings.setIcon(new ImageIcon(ImageIO
+                            .read(Startup.class.getResource("/client/app/content/settings-50px-background.png"))));*/
                     darkMode.setIcon(new ImageIcon(
                             ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
                     logout.setIcon(new ImageIcon(
                             ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));
-                    ;
+                    
                 } catch (IOException e) {
                     e.printStackTrace();
 
+                }
+                if (windowsOS) {
+                    logout.setBackground(Color.WHITE);
+                    darkMode.setBackground(Color.WHITE);
                 }
 
                 passPanelMode = null;
@@ -216,6 +222,15 @@ public class AppCore extends JFrame implements ActionListener {
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+
+        c.fill = GridBagConstraints.VERTICAL;
+        c.anchor = GridBagConstraints.WEST;
+
+        //c.anchor = GridBagConstraints.PAGE_END;
+
+
 
         mainPanel.add(navPanel, c);
 
@@ -228,10 +243,19 @@ public class AppCore extends JFrame implements ActionListener {
         // contraints for sidepanel to keep it on the right side of the mainPanel
         c = new GridBagConstraints();
 
-        c.gridx = 6;
+        c.gridx = 8;
         c.gridy = 0;
         c.gridheight = 1;
         c.gridwidth = 1;
+        c.weightx = 1;
+        c.weighty = 1;
+
+        //make sidepanel full height
+        c.fill = GridBagConstraints.VERTICAL;
+        c.anchor = GridBagConstraints.PAGE_END;
+        c.insets = new Insets(0, 0, 0, 0);
+
+
 
         mainPanel.add(sidePanel, c);
 
