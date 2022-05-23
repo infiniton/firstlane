@@ -39,11 +39,11 @@ public class AppCore extends JFrame implements ActionListener {
     public AppCore(Client client) throws IOException {
 
         UIManager.LookAndFeelInfo looks[] = UIManager.getInstalledLookAndFeels();
+        
         try {
-            // 0-Swing, 1-Mac, 2-?, 3-Windows, 4-Old Windows
             UIManager.setLookAndFeel(looks[3].getClassName());
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
         this.client = client;
 
@@ -55,14 +55,15 @@ public class AppCore extends JFrame implements ActionListener {
         image = ImageIO.read(getClass().getResource("/client/app/content/logo-no-text.png"));
 
         //if os is windows, set color232 to white
-        if (System.getProperty("os.name").contains("Windows")) {
+        color232 = new Color(232, 232, 232);
+        /*if (System.getProperty("os.name").contains("Windows")) {
             color232 = Color.WHITE;
             windowsOS = true;
 
         } else {
             color232 = new Color (232, 232, 232);
             windowsOS = false; // yay!
-        }
+        }*/
 
         try {
             // set icon for mac os (and other systems which do support this method)
@@ -76,7 +77,7 @@ public class AppCore extends JFrame implements ActionListener {
 
         mainPanel = new JPanel(layout);
         frame.setContentPane(mainPanel);
-        mainPanel.setBackground(color232);
+        mainPanel.setBackground(Color.WHITE);
 
         mainPanel.setLayout(new GridBagLayout());
         c = new GridBagConstraints();
