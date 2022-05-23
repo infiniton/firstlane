@@ -8,7 +8,10 @@ import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
-//import org.json.JSONObject;
+/***
+ * Shows the register screen for the client
+ * Calls Login upon successful registration
+ */
 
 public class Register extends JFrame implements ActionListener {
     JPanel panel;

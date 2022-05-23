@@ -8,6 +8,10 @@ import java.sql.ResultSet;
 
 import org.json.JSONObject;
 
+
+/***
+ * Interface between API and database.
+ */
 public class DBLink {
     private static final String url = "jdbc:mysql://localhost:3306/firstlane";
     private static final String username = "firstlane";

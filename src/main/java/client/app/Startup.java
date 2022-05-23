@@ -10,13 +10,13 @@ import java.net.URL;
 import javax.imageio.ImageIO;
 
 /***
- * Main program for both the client and server.rest
+ * Main program for both the client and server
  * 
  * To start the server, run the following command in the terminal:
- * java -jar server-0.0.1-SNAPSHOT.jar   
+ * java -jar firstlane-v1.0.0.jar
  * 
  * To start the client, run the following command in the terminal:
- * java -cp server-0.0.1-SNAPSHOT.jar -Dloader.main=client.app.Startup org.springframework.boot.loader.PropertiesLauncher
+ * java -cp firstlane-v1.0.0.jar -Dloader.main=client.app.Startup org.springframework.boot.loader.PropertiesLauncher
  */
 
 public class Startup {

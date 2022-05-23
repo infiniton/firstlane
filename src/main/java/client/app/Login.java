@@ -10,6 +10,10 @@ import javax.imageio.ImageIO;
 
 //import org.json.JSONObject;
 
+/***
+ * Shows the login screen for the client
+ * Calls appcore upon successful login
+ */
 public class Login extends JFrame implements ActionListener, KeyListener {
     JPanel panel;
     JLabel usernameLabel, passwordLabel, badLogin, goodLogin;
@@ -43,7 +47,7 @@ public class Login extends JFrame implements ActionListener, KeyListener {
         JLabel scaledLogo = new JLabel(scaledImage);
         panel.add(scaledLogo);
 
-        //center the middle of logo with middle of frame
+        // center the middle of logo with middle of frame
         layout.putConstraint(SpringLayout.HORIZONTAL_CENTER, scaledLogo, 0, SpringLayout.HORIZONTAL_CENTER, panel);
         scaledLogo.setPreferredSize(new Dimension(475, 125));
 

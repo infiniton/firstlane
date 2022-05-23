@@ -10,6 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 import org.json.JSONObject;
 
+/***
+ * API Controller for server-side REST API
+ */
 @RestController
 @RequestMapping("/api")
 public class APIRestController {

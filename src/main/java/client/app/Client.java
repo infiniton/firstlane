@@ -10,6 +10,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.*;
 
+
+/***
+ * Interface between the client and the server.
+ * Sends calls to server and parses responses.
+ */
 public class Client {
     private HttpURLConnection con;
 
