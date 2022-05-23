@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>server</groupId>
 	<artifactId>firstlane</artifactId>
-	<version>v1.0</version>
+	<version>v1.0.0</version>
 	<packaging>jar</packaging>
 	<name>rest</name>
 	<description>REST API for firstlane pw mgr</description>
