@@ -101,6 +101,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         addPass = new JButton(plus);
         addPass.addActionListener(this);
+        addPass.setOpaque(false);
+        addPass.setContentAreaFilled(false);
         addPass.setBorderPainted(false);
 
         navPanel = new JPanel();
@@ -131,6 +133,9 @@ public class AppCore extends JFrame implements ActionListener {
                 new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkMode-50px.png"))));
         darkMode.setBorderPainted(false);
         c = new GridBagConstraints();
+        darkMode.setOpaque(false);
+        darkMode.setContentAreaFilled(false);
+        darkMode.setBorderPainted(false);
 
         c.gridx = 0;
         c.gridy = 1;
@@ -144,7 +149,9 @@ public class AppCore extends JFrame implements ActionListener {
                 new ImageIcon(ImageIO.read(Startup.class.getResource("/client/app/content/darkLock-closed-50px.png"))));
         logout.setBorderPainted(false);
         c = new GridBagConstraints();
-
+        logout.setOpaque(false);
+        logout.setContentAreaFilled(false);
+        logout.setBorderPainted(false);
         c.gridx = 0;
         c.gridy = 2;
         // add top padding
@@ -178,8 +185,8 @@ public class AppCore extends JFrame implements ActionListener {
                     e.printStackTrace();
                 }
                 if (windowsOS) {
-                    logout.setBackground(new Color(32, 34, 37));
-                    darkMode.setBackground(new Color(32, 34, 37));
+                    //logout.setBackground(new Color(32, 34, 37));
+                    //darkMode.setBackground(new Color(32, 34, 37));
                 }
                 
                 passPanelMode = "dark";
@@ -206,8 +213,8 @@ public class AppCore extends JFrame implements ActionListener {
 
                 }
                 if (windowsOS) {
-                    logout.setBackground(Color.WHITE);
-                    darkMode.setBackground(Color.WHITE);
+                    //logout.setBackground(Color.WHITE);
+                    //darkMode.setBackground(Color.WHITE);
                 }
 
                 passPanelMode = null;
