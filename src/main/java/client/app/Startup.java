@@ -25,7 +25,6 @@ public class Startup {
 
     public static void main(String[] args) throws IOException {
 
-        final Taskbar taskbar = Taskbar.getTaskbar();
         UIManager.LookAndFeelInfo looks[] = UIManager.getInstalledLookAndFeels();
     try{
         //0-Swing, 1-Mac, 2-?, 3-Windows, 4-Old Windows
@@ -48,6 +47,7 @@ public class Startup {
 
         try {
             // set icon for mac os
+            final Taskbar taskbar = Taskbar.getTaskbar();
             taskbar.setIconImage(image);
         } catch (final UnsupportedOperationException e) {
             System.out.println("Not supported by this OS: 'taskbar.setIconImage'");

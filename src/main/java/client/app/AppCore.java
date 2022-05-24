@@ -38,7 +38,6 @@ public class AppCore extends JFrame implements ActionListener {
     GridBagConstraints c;
     Color fontColor, addPanelBg, color232;
 
-    final Taskbar taskbar = Taskbar.getTaskbar();
 
     public AppCore(Client client) throws IOException {
 
@@ -63,6 +62,8 @@ public class AppCore extends JFrame implements ActionListener {
 
         try {
             // set icon for mac os (and other systems which do support this method)
+            final Taskbar taskbar = Taskbar.getTaskbar();
+
             taskbar.setIconImage(image);
         } catch (final UnsupportedOperationException e) {
             System.out.println("The os does not support: 'taskbar.setIconImage'");
