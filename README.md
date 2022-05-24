@@ -27,9 +27,9 @@ You can find all of the dependencies used by this project in the Maven pom.xml
 
 ### Running the app
 To start the server, run the following command in the terminal (only do this when self-hosting):\
-```java -jar firstlane-v1.0.0.jar```
+```java -jar firstlane-v1.0.1.jar```
 
 To start the client, run the following command in the terminal:\
-```java -cp firstlane-v1.0.0.jar -Dloader.main=client.app.Startup org.springframework.boot.loader.PropertiesLauncher```
+```java -cp firstlane-v1.0.1.jar -Dloader.main=client.app.Startup org.springframework.boot.loader.PropertiesLauncher```
 
 ###### An [Infiniton](https://infiniton.xyz) Product
